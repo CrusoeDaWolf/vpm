@@ -11,10 +11,6 @@
 
 version="0.2"
 
-msg () {
-  echo "[vpm] $@"
-}
-
 usage () {
   echo "Usage: vpm <OPTIONS> [<args>]"
   echo
@@ -24,28 +20,22 @@ usage () {
   echo "update                       - Update the system"
   echo "repolist                     - list configured repositories"
   echo
-  echo "info <package(s)>            - Show information for package"
-  echo "filelist <package(s)>        - Show list of files for package"
-  echo "dependencies <package(s)>    - Show dependendies for package"
-  echo "reverse <package(s)>         - Show reverse dependendies for package (packages that depend on it)"
+  echo "info <package(s)>            - Show information about package"
+  echo "filelist <package(s)>        - Show file-list of package"
+  echo "dependencies <package(s)>    - Show dependendies of package"
+  echo "reverse <package(s)>         - Show reverse dependendies of package"
   echo
   echo "search <name>                - Search for package(s) by name/description"
   echo "searchfile <file>            - Search for package containing <file>"
   echo
   echo "install <package(s)>         - Install <package(s)>"
-  echo "forceinstall <package(s)>    - Force installation (incl. Upgrade/Downgrade) of <package(s)>"
+  echo "forceinstall <package(s)>    - Force installation of <package(s)>"
   echo
   echo "list                         - List installed packages"
   echo "remove <package(s)           - Remove (uninstall) <package(s)"
   echo "cleanup                      - Empty (clean-up) cache directory"
   echo "autoremove                   - Remove orphaned packages"
   echo "help                         - Show this help screen"
-  echo
-  echo "XBPS compatibility notes:"
-  echo "vpm was designed to be compatible - it will just silently"
-  echo "relay unrecognized subcommands to their respective"
-  echo "xbpms-subcommand calls (if present)."
-  echo
   echo
 }
 
@@ -55,7 +45,7 @@ banner () {
   .--.--.-----.--------.
   |  |  |  _  |        |
    \___/|   __|__|__|__|
-        |__| vpm - Version: ${version}
+        |__| vpm - Version: ${version} -- $(xbps-query --version)
 EOF
   echo
   xbps-query --version
