@@ -12,7 +12,12 @@
 version="0.2"
 
 usage () {
-  echo "Usage: vpm <OPTIONS> [<args>]"
+  echo
+  echo "vpm - void package manager"
+  echo
+  echo "USAGE: "
+  echo
+  echo "vpm <OPTIONS> [<args>]"
   echo
   echo "OPTIONS: "
   echo
@@ -39,22 +44,8 @@ usage () {
   echo
 }
 
-banner () {
-  echo
-  cat <<EOF
-  .--.--.-----.--------.
-  |  |  |  _  |        |
-   \___/|   __|__|__|__|
-        |__| vpm - Version: ${version} -- $(xbps-query --version)
-EOF
-  echo
-  xbps-query --version
-  echo
-}
-
 
 if [[ "$1" == "" ]]; then
-  banner
   usage
   exit 1
 fi
@@ -128,14 +119,12 @@ case "$1" in
   xbps-remove -O "$@"
   ;;
   help|--help)
-  banner
   usage
   ;;
   ''|*)
   a="$1"
   if hash "xbps-${a}" >/dev/null 2>&1; then echo "Running: xbps-${a} $@"; xbps-${a} $@; else echo "No XBPS sub-command binary found for: $@" && exit 1; fi
   exit 1
-  banner
   echo
   echo "Unrecognized or no subcommand: $1"
   shift
