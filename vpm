@@ -13,7 +13,7 @@ version="0.2"
 
 usage () {
   echo
-  echo "vpm - void package manager"
+  echo "[vpm] - voidlinux package management utility"
   echo
   echo "USAGE: "
   echo
