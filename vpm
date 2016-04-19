@@ -44,11 +44,11 @@ usage () {
 banner () {
   echo
   tput setaf 35
-  cat <<-EOF
-	.--.--.-----.--------.
-	|  |  |  _  |        |
-	 \___/|   __|__|__|__| vpm - (v)oidlinux (p)ackage (m)anagement
-	      |__|  
+  cat <<EOF
+  .--.--.-----.--------.
+  |  |  |  _  |        |
+   \___/|   __|__|__|__| [vpm] a simple voidlinux package management utility
+        |__|  
 EOF
   tput setaf 14
   echo
