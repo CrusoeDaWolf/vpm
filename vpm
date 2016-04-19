@@ -9,35 +9,28 @@
 # 
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-colorize () {
-case "$1" in
-  [0-9]*)
-    colorize "$1"
-    shift
-  ;;
-  reset)
-    tput sgr0
-  ;;
-esac
+version="0.2"
+
+msg () {
+  echo "[vpm] $@"
 }
 
-sage () {
-  colorize 15
-  echo "Usage: vpm <option> [<args>]"
-  colorize 6
+usage () {
+  echo "Usage: vpm <OPTIONS> [<args>]"
   echo
-  echo "Recognized Options: "
+  echo "OPTIONS: "
   echo
   echo "sync                         - Synchronize remote repository data"
   echo "update                       - Update the system"
+  echo "repolist                     - list configured repositories"
   echo
-  echo "info <package>               - Show information for package"
-  echo "filelist <package>           - Show list of files for package"
-  echo "dependencies <package>       - Show dependendies for package"
-  echo "reverse <package>            - Show reverse dependendies for package (packages that depend on it)"
+  echo "info <package(s)>            - Show information for package"
+  echo "filelist <package(s)>        - Show list of files for package"
+  echo "dependencies <package(s)>    - Show dependendies for package"
+  echo "reverse <package(s)>         - Show reverse dependendies for package (packages that depend on it)"
   echo
   echo "search <name>                - Search for package(s) by name/description"
-  echo "searchfile <filename>        - search for package containing <filename>"
+  echo "searchfile <file>            - Search for package containing <file>"
   echo
   echo "install <package(s)>         - Install <package(s)>"
   echo "forceinstall <package(s)>    - Force installation (incl. Upgrade/Downgrade) of <package(s)>"
@@ -48,23 +41,23 @@ sage () {
   echo "autoremove                   - Remove orphaned packages"
   echo "help                         - Show this help screen"
   echo
-  echo "Unrecognized sub-commands will be forwarded to their respective"
-  echo "xbpms-subcommand calls, so you can use e.g. \"xbpms query <args>\", too."
+  echo "XBPS compatibility notes:"
+  echo "vpm was designed to be compatible - it will just silently"
+  echo "relay unrecognized subcommands to their respective"
+  echo "xbpms-subcommand calls (if present)."
+  echo
   echo
 }
 
 banner () {
   echo
-  colorize 35
   cat <<EOF
   .--.--.-----.--------.
   |  |  |  _  |        |
-   \___/|   __|__|__|__| [vpm] a simple voidlinux package management utility
-        |__|  
+   \___/|   __|__|__|__|
+        |__| vpm - Version: ${version}
 EOF
-  colorize 14
   echo
-  colorize 11
   xbps-query --version
   echo
 }
@@ -100,11 +93,6 @@ case "$1" in
   xbps-query -R -o "*/$1"
   ;;
   list)
-  colorize 3
-  echo "List of installed packages:"
-  colorize 5
-  echo "==========================="
-  colorize 6
   echo
   xbps-query -l
   echo
@@ -116,10 +104,8 @@ case "$1" in
   echo "done."
   ;;
   install)
-  colorize 3
   shift
   echo "Installing Package(s): $@"
-  colorize 6
   xbps-install -S "$@"
   ;;
   forceinstall)
@@ -139,36 +125,27 @@ case "$1" in
   ;;
   update)
   shift
-  colorize 3
   echo "Running system update..."
-  colorize 6
   xbps install -Suv
   ;;
   search)
   shift
-  colorize 6
   xbps-query -Rs "$@"
   ;;
   cleanup)
-  colorize 3
   echo "Cleaning up packages (will remove orphaned packages)..."
-  colorize 6
   shift
   xbps-remove -O "$@"
   ;;
   help|--help)
-  colorize 3
   banner
-  colorize 6
   usage
   ;;
   ''|*)
   a="$1"
-  if hash "xbps-${a}" >/dev/null 2>&1; then echo "Running: xbps-${a} $@"; xbps-${a} $@; else echo "No such XBPS sub-command: $@" && exit 1; fi
+  if hash "xbps-${a}" >/dev/null 2>&1; then echo "Running: xbps-${a} $@"; xbps-${a} $@; else echo "No XBPS sub-command binary found for: $@" && exit 1; fi
   exit 1
-  colorize 3
   banner
-  colorize 6
   echo
   echo "Unrecognized or no subcommand: $1"
   shift
