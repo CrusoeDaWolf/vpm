@@ -12,6 +12,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 Seeing is believing!
 
-![alt tag](https://raw.githubusercontent.com/netzverweigerer/xbps/master/screenshots/xbps.png)
+![alt tag](https://raw.githubusercontent.com/netzverweigerer/xbps/master/screenshots/vpm.png)
 
 
