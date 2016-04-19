@@ -1,0 +1,169 @@
+#!/bin/bash
+# 
+# vpm - a simple (to use) wrapper script for XBPS - the X Binary Package System (see http://www.voidlinux.eu)
+# Copyright (c) 2016 Armin Jenewein <a@m2m.pm> - Released under the terms of the GNU G
+# 
+# Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+usage () {
+  tput setaf 15
+  echo "Usage: vpm <option> [<args>]"
+  tput setaf 6
+  echo
+  echo "Recognized Options: "
+  echo
+  echo "sync                         - Synchronize remote repository data"
+  echo "update                       - Update the system"
+  echo
+  echo "info <package>               - Show information for given package"
+  echo "filelist <package>           - Show list of files for given package"
+  echo "dependencies <package>       - Show dependendies for given package"
+  echo "reverse <package>            - Show reverse dependendies for given package (packages that depend on it)"
+  echo
+  echo "search <name>                - Search for package(s) by name/description"
+  echo "searchfile <filename>        - search for package containing <filename>"
+  echo
+  echo "install <package(s)>         - Install <package(s)>"
+  echo "forceinstall <package(s)>    - Force installation (incl. Upgrade/Downgrade) of <package(s)>"
+  echo
+  echo "list                         - List installed packages"
+  echo "remove <package(s)           - Remove (uninstall) <package(s)"
+  echo "cleanup                      - Empty (clean-up) cache directory"
+  echo "autoremove                   - Remove orphaned packages"
+  echo "help                         - Show this help screen"
+  echo
+  echo "Unrecognized sub-commands will be forwarded to their respective"
+  echo "xbpms-subcommand calls, so you can use e.g. \"xbpms query <args>\", too."
+  echo
+}
+
+banner () {
+  echo
+  tput setaf 35
+  cat <<-EOF
+	.--.--.-----.--------.
+	|  |  |  _  |        |
+	 \___/|   __|__|__|__| vpm - (v)oidlinux (p)ackage (m)anagement
+	      |__|  
+EOF
+  tput setaf 14
+  echo
+  tput setaf 11
+  xbps-query --version
+  echo
+}
+
+
+if [[ "$1" == "" ]]; then
+  banner
+  usage
+  exit 1
+fi
+
+case "$1" in
+  info)
+  shift
+  xbps-query -R "$@"
+  ;;
+  filelist)
+  shift
+  xbps-query -R -f "$@"
+  ;;
+  dependencies)
+  shift
+  xbps-query -R -x "$@"
+  ;;
+  reverse)
+  shift
+  xbps-query -R -X "$@"
+  ;;
+  searchfile)
+  shift
+  echo "This might take a long time, please be patient..."
+  sleep 1
+  xbps-query -R -o "*/$1"
+  ;;
+  list)
+  tput setaf 3
+  echo "List of installed packages:"
+  tput setaf 5
+  echo "==========================="
+  tput setaf 6
+  echo
+  xbps-query -l
+  echo
+  shift
+  ;;
+  sync)
+  echo "Synchronizing remote repository data ... "
+  xbps-install -S
+  echo "done."
+  ;;
+  install)
+  tput setaf 3
+  shift
+  echo "Installing Package(s): $@"
+  tput setaf 6
+  xbps-install -S "$@"
+  ;;
+  forceinstall)
+  shift
+  echo "force-install: Forcing installation (incl. eventual Upgrade/Downgrade) of package(s): $@"
+  xbps-install -Sf "$@"
+  ;;
+  remove)
+  shift
+  xbps-remove "$@"
+  ;;
+  autoremove)
+  shift
+  echo -n "Removing orphaned packages... "
+  xbps-remove -O
+  echo "done."
+  ;;
+  update)
+  shift
+  tput setaf 3
+  echo "Running system update..."
+  tput setaf 6
+  xbps install -Suv
+  ;;
+  search)
+  shift
+  tput setaf 6
+  xbps-query -Rs "$@"
+  ;;
+  cleanup)
+  tput setaf 3
+  echo "Cleaning up packages (will remove orphaned packages)..."
+  tput setaf 6
+  shift
+  xbps-remove -O "$@"
+  ;;
+  help|--help)
+  tput setaf 3
+  banner
+  tput setaf 6
+  usage
+  ;;
+  ''|*)
+  a="$1"
+  if hash "xbps-${a}" >/dev/null 2>&1; then echo "Running: xbps-${a} $@"; xbps-${a} $@; else echo "No such XBPS sub-command: $@" && exit 1; fi
+  exit 1
+  tput setaf 3
+  banner
+  tput setaf 6
+  echo
+  echo "Unrecognized or no subcommand: $1"
+  shift
+  echo "Try: xbps-${a} $@ "
+  usage
+  exit 1
+  ;;
+esac
+
+
