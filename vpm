@@ -107,7 +107,7 @@ case "$1" in
   update)
   shift
   echo "Running system update..."
-  xbps install -Suv
+  xbps-install -Suv
   ;;
   search)
   shift
