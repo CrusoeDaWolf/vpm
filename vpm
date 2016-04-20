@@ -269,7 +269,6 @@ case "$arg" in
   xbps-install -S "$arg"
   ret="$?"
   msg "[xbps-install -S $arg] return code: $ret"
-  fi
   done
   ;;
 
