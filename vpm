@@ -119,8 +119,18 @@ case "$1" in
 
   install)
   shift
-  msg "Installing Package(s): $@ (xbps-install -S $@)"
-  xbps-install -S "$@"
+  if [ "$#" -lt 1 ]; then
+    usage
+    exit 1
+  fi
+  args=($@)
+  count=0
+  for arg in "${args[@]}"; do
+  let count=count+1
+  msg "Installing ($count/${#args[@]}): $arg (xbps-install -S $arg) ..."
+  xbps-install -S "$arg"
+  msg "done."
+  done
   ;;
 
   forceinstall)
