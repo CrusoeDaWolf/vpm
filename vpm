@@ -54,7 +54,6 @@ EOF
   _tput sgr0
   msg "vpm - Version: $version"
   msg "Copyright (c) 2016 Armin Jenewein <a@m2m.pm>"
-  echo
   msg "XBPS version: $(xbps-query --version)"
 }
 
@@ -98,7 +97,6 @@ usage () {
   echo "cleanup                      - Clean up cache directory"
   echo "autoremove                   - Remove orphaned packages"
   echo "help                         - Show usage information"
-  echo
   echo
   _tput setaf 66
   echo "XBPS COMPATIBILITY"
