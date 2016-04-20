@@ -71,7 +71,7 @@ usage () {
   _tput setaf 66
   echo "OPTIONS: "
   _tput setaf 101
-  echo "--color=<true/false>         - Enable/Disable colorized ou_tput"
+  echo "--color=<true/false>         - Enable/Disable colorized output"
   echo
   _tput setaf 66
   echo "SUBCOMMANDS: "
