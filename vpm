@@ -69,18 +69,25 @@ usage () {
   version
   echo
   _tput setaf 66
+  echo
   echo "USAGE: "
   _tput setaf 101
+  echo
   echo "vpm [OPTIONS] [SUBCMD] [<OPTIONS>] [<args>]"
   echo 
   _tput setaf 66
+  echo
   echo "OPTIONS: "
   _tput setaf 101
+  echo
   echo "--color=<true/false>         - Enable/Disable colorized output"
   echo "--help                       - (same as: help)"
   echo
   _tput setaf 66
-  echo "SUBCOMMANDS: "
+  echo
+  echo -n "SUBCOMMANDS: "
+  echo "(feel free to prefix them with --, vpm doesn't care.)"
+  echo
   _tput setaf 109
   echo "sync                         - Synchronize remote repository data"
   echo "update                       - Update the system"
@@ -102,13 +109,16 @@ usage () {
   echo "help                         - Show usage information"
   echo
   _tput setaf 66
+  echo
   echo "XBPS COMPATIBILITY:"
   _tput setaf 103
   f=(/usr/sbin/xbps-*)
+  echo
   echo "vpm also understands ALL xbps commands, too:"
   echo -n "Example: "
   selected=${f[$RANDOM % ${#f[@]}]}
   echo "${0##*/} ${selected##*-} <ARGS>"
+  echo
   echo
 }
 
@@ -128,42 +138,58 @@ fi
 case "$arg" in
   info)
     shift
+    msg "(xbps-query -R $@):"
     xbps-query -R "$@"
+    ret=$?; msg "Execution finished (xbps-query -R $@), return code was: $ret"
+    exit $ret
   ;;
 
   filelist)
     shift
     xbps-query -R -f "$@"
+    ret=$?; msg "Execution finished (xbps-query -R -f \"*/$1\"), return code was: $ret"
+    exit $ret
   ;;
 
   dependencies)
     shift
     xbps-query -R -x "$@"
+    ret=$?; msg "Execution finished (xbps-query -R -x \"*/$1\"), return code was: $ret"
+    exit $ret
   ;;
 
   reverse)
     shift
     xbps-query -R -X "$@"
+    ret=$?; msg "Execution finished (xbps-query -R -X \"*/$1\"), return code was: $ret"
+    exit $ret
   ;;
 
   searchfile)
     shift
     msg "searchfile: This might take a long time, please be patient..."
+    msg "(xbps-query -R -o \"*/$1\"):"
     sleep 1
     xbps-query -R -o "*/$1"
+    ret=$?; msg "Execution finished (xbps-query -R -o \"*/$1\"), return code was: $ret"
+    exit $ret
   ;;
 
   list)
     shift
     msg "Installed packages: "
+    count=0
     xbps-query -l | while read line; do
+    let count=count+1
     pkgname="$(echo "$line" | cut -d" " -f 2 | xargs -0)"
     version="$(extract_versionstring "$pkgname")"
     pkg="$(extract_packagename "$pkgname")"
     tput setaf 32
-    echo -e -n "${pkg} "
+    echo -e -n "($count) ${pkg} "
     tput setaf 244
-    echo " ${version} "
+    echo -e -n " [${version}] "
+    tput setaf 241
+    echo " [${pkgname}] "
     shift
     done
   ;;
@@ -210,9 +236,12 @@ case "$arg" in
   let count=count+1
   msg "Installing ($count/${#args[@]}): $arg (xbps-install -S $arg) ..."
   xbps-install -S "$arg"
-  msg "[xbps-install -S $arg] return code: $?"
+  ret="$?"
+  msg "[xbps-install -S $arg] return code: $ret"
+  if [[ "$ret" -lt 17 ]]; then
   if type hash >/dev/null 2>&1; then
   msg "zsh detected, Don't forget to refresh the command hash table via \"hash -r\"."
+  fi
   fi
   done
   ;;
