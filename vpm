@@ -114,7 +114,7 @@ usage () {
   _tput setaf 103
   f=(/usr/sbin/xbps-*)
   echo
-  echo "vpm also understands ALL xbps commands, too:"
+  echo "vpm also understands xbps commands:"
   echo -n "Example: "
   selected=${f[$RANDOM % ${#f[@]}]}
   echo "${0##*/} ${selected##*-} <ARGS>"
