@@ -98,6 +98,18 @@ usage () {
   echo "autoremove                   - Remove orphaned packages"
   echo "help                         - Show usage information"
   echo
+  echo
+  _tput setaf 66
+  echo "XBPS COMPATIBILITY"
+  _tput setaf 109
+  f=(/usr/sbin/xbps-*)
+  echo "vpm also understands ALL xbps commands, too:"
+  echo -n "Example: "
+  selected=${f[$RANDOM % ${#f[@]}]}
+  echo "${0##/*} ${selected} <ARGS>"
+  
+
+
 }
 
 
