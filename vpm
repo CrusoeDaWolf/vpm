@@ -91,7 +91,7 @@ usage () {
   echo "list                         - List installed packages"
   echo "install <package(s)>         - Install <package(s)>"
   echo "forceinstall <package(s)>    - Force installation of <package(s)>"
-  echo "remove <package(s)           - Remove <package(s)"
+  echo "remove <package(s)           - Remove <package(s)>"
   echo "cleanup                      - Clean up cache directory"
   echo "autoremove                   - Remove orphaned packages"
   echo "help                         - Show usage information"
