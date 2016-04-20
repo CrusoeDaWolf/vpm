@@ -91,7 +91,7 @@ usage () {
   echo "filelist <package>           - Show file-list of <package>"
   echo "dependencies <package>       - Show dependendies of <package>"
   echo "reverse <package>            - Show reverse dependendies of <package>"
-  echo "search <name>                - Search for package by <name> (incl. package description)"
+  echo "search <name>                - Search for package by <name>"
   echo "searchfile <file>            - Search for package containing <file>"
   echo "list                         - List installed packages"
   echo "install <package>            - Install <package>"
