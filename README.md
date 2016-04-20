@@ -27,7 +27,7 @@ I personally think I don't, XBPS is hard to use and has a heavy learning curve t
 # ZOMG! PONIES!!111
 Rainbows and unicorns, indeed. But you can easily disable all colorization and fancyness, too, to use it in scripts. All otions have human readable and easy to remember syntax, no --long-option-with-multiple-complex-words, no need to even prefix arguments with --, vpm just tries to do its best it can to understand the user.
 
-+ Author
+# Author
 vpm was written by Armin Jenewein (GitHub: @netzverweigerer) <vpm@m2m.pm>
 
 
