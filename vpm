@@ -107,6 +107,7 @@ usage () {
   echo -n "Example: "
   selected=${f[$RANDOM % ${#f[@]}]}
   echo "${0##*/} ${selected##*-} <ARGS>"
+  echo
   
 
 
