@@ -1,8 +1,8 @@
 #!/bin/bash
+# vim: ts=2 tw=2
 
 # vpm - void package management utility for
 # XBPS, the X Binary Package System
-
 # Copyright (c) 2016 Armin Jenewein <a@m2m.pm>
 
 version="0.6"
@@ -16,39 +16,53 @@ case "$1" in
   shift
   ;;
   "--color=true")
-  color=true
+	  color=true
   shift
   ;;
 esac
 
-_tput () {
+color () {
 if [[ $color == true ]]; then
-  tput "$@"
+  case "$1" in
+    [0-9]*)
+      tput setaf "$1"
+    ;;
+    reset)
+      tput sgr0
+    ;;
+    *)
+      tput "$@"
+    ;;
+  esac
 fi
 
 }
 
 msg () {
-  _tput setaf 110
+  color 110
   echo -n "["
-  _tput setaf 214
+  color 214
   echo -n "vpm"
-  _tput setaf 110
+  color 110
   echo -n "] "
   echo "$@"
-  _tput sgr0
+  color sgr0
 }
 
-version () {
-  _tput setaf 107
+banner () {
   cat <<EOF
  __ ___ __ _ __  
  \ V / '_ \ '  \   vpm - void package management utility
   \_/| .__/_|_|_|  GitHub: https://github.com/netzverweigerer/vpm
      |/         
 EOF
+}
+
+version () {
+  color 107
+  banner
   echo
-  _tput sgr0
+  color sgr0
   msg "vpm - Version: $version"
   msg "Copyright (c) 2016 Armin Jenewein <a@m2m.pm>"
   msg "XBPS version: $(xbps-query --version)"
@@ -68,27 +82,27 @@ usage () {
   echo
   version
   echo
-  _tput setaf 66
+  color 66
   echo
   echo "USAGE: "
-  _tput setaf 101
+  color 101
   echo
   echo "vpm [OPTIONS] [SUBCMD] [<OPTIONS>] [<args>]"
   echo 
-  _tput setaf 66
+  color 66
   echo
   echo "OPTIONS: "
-  _tput setaf 101
+  color 101
   echo
   echo "--color=<true/false>         - Enable/Disable colorized output"
   echo "--help                       - (same as: help)"
   echo
-  _tput setaf 66
+  color 66
   echo
   echo -n "SUBCOMMANDS: "
   echo "(feel free to prefix them with --, vpm doesn't care.)"
   echo
-  _tput setaf 109
+  color 109
   echo "sync                         - Synchronize remote repository data"
   echo "update                       - Update the system"
   echo "repolist                     - List configured repositories"
@@ -108,10 +122,10 @@ usage () {
   echo "autoremove                   - Remove orphaned packages"
   echo "help                         - Show usage information"
   echo
-  _tput setaf 66
+  color 66
   echo
   echo "XBPS COMPATIBILITY:"
-  _tput setaf 103
+  color 103
   f=(/usr/sbin/xbps-*)
   echo
   echo "vpm also understands xbps commands:"
@@ -160,8 +174,9 @@ case "$arg" in
 
   reverse)
     shift
+    msg "Reverse dependencies for $@ (xbps-query -R $@):"
     xbps-query -R -X "$@"
-    ret=$?; msg "Execution finished (xbps-query -R -X \"*/$1\"), return code was: $ret"
+    ret=$?; msg "Execution finished (xbps-query -R $@), return code was: $ret"
     exit $ret
   ;;
 
@@ -241,7 +256,7 @@ case "$arg" in
   ret="$?"
   msg "[xbps-install -S $arg] return code: $ret"
   if [[ "$ret" -lt 1 ]]; then
-  if type hash >/dev/null 2>&1; then
+  if type _zsh_highlight_widget_get-line; then
   msg "You might want to refresh the command hash table via \"hash -r\" or \"rehash\"."
   fi
   fi
