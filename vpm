@@ -1,27 +1,31 @@
 #!/bin/bash
-# 
-# vpm - a simple (to use) wrapper script for XBPS - the X Binary Package System (see http://www.voidlinux.eu)
-# Copyright (c) 2016 Armin Jenewein <a@m2m.pm> - Released under the terms of the GNU G
-# 
-# Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-# 
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-version="0.2"
+# vpm - void package management utility for
+# XBPS, the X Binary Package System
+
+# Copyright (c) 2016 Armin Jenewein <a@m2m.pm>
+
+version="0.3"
+
+version () {
+  echo "vpm $version, Copyright (c) 2016 Armin Jenewein <a@m2m.pm>"
+  echo "XBPS version: $(xbps-query --version)"
+}
 
 msg () {
-  echo "vpm - $@"
+  echo "vpm: $@"
+}
+
+# extract versionstring appendix from given package name
+extract_versionstring () {
+  echo "$1" | rev | cut -d"-" -f 1 | rev
 }
 
 usage () {
   echo
-  echo "vpm ${version}"
-  echo
+  version
   echo
   echo "USAGE: vpm <OPTIONS> [<args>]"
-  echo
   echo
   echo "OPTIONS: "
   echo
@@ -56,43 +60,50 @@ fi
 
 case "$1" in
   info)
-  shift
-  xbps-query -R "$@"
+    shift
+    xbps-query -R "$@"
   ;;
 
   filelist)
-  shift
-  xbps-query -R -f "$@"
+    shift
+    xbps-query -R -f "$@"
   ;;
 
   dependencies)
-  shift
-  xbps-query -R -x "$@"
+    shift
+    xbps-query -R -x "$@"
   ;;
 
   reverse)
-  shift
-  xbps-query -R -X "$@"
+    shift
+    xbps-query -R -X "$@"
   ;;
 
   searchfile)
-  shift
-  echo "This might take a long time, please be patient..."
-  sleep 1
-  xbps-query -R -o "*/$1"
+    shift
+    echo "This might take a long time, please be patient..."
+    sleep 1
+    xbps-query -R -o "*/$1"
   ;;
 
   list)
-  echo
-  xbps-query -l
-  echo
-  shift
+    shift
+    xbps-query -l | while read line; do
+    pkgname="$(echo "$line" | cut -d" " -f 2 | xargs -0)"
+    version="$(extract_versionstring "$pkgname")"
+    echo
+    echo "Package name: $pkgname"
+    echo "Version: $version"
+    echo
+    done
+    echo
+    shift
   ;;
 
   sync)
-  echo "Synchronizing remote repository data ... "
-  xbps-install -S
-  echo "done."
+    echo "Synchronizing remote repository data ... "
+    xbps-install -S
+    echo "done."
   ;;
 
   install)
@@ -147,10 +158,8 @@ case "$1" in
     msg "(relaying): xbps-${a} $@"
     xbps-${a} $@
   else
+    msg "Unrecognized subcommand: $1"
     echo
-    echo "Unrecognized subcommand: $1"
-    echo
-    usage
     exit 1
   fi
   ;;
