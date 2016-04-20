@@ -7,9 +7,8 @@
 
 version="0.3"
 
-# set to 0 to permanently disable colors
+# set to "false" to permanently disable colors
 color=true
-
 
 case "$1" in
   "--color=false")
@@ -21,8 +20,6 @@ case "$1" in
   shift
   ;;
 esac
-
-
 
 _tput () {
 if [[ $color == true ]]; then
@@ -107,9 +104,6 @@ usage () {
   selected=${f[$RANDOM % ${#f[@]}]}
   echo "${0##*/} ${selected##*-} <ARGS>"
   echo
-  
-
-
 }
 
 
@@ -247,13 +241,13 @@ case "$1" in
 
   ''|*)
   a="$1"
-  shift
   if hash "xbps-${a}" >/dev/null 2>&1; then
+    shift
     # xbps-<subcommand> found
-    msg "(relaying to XBPS): xbps-${a} $@"
+    msg "relaying to XBPS: xbps-${a} $@"
     xbps-${a} $@
   else
-    msg "Unrecognized subcommand: $1 - try: $0 help"
+    msg "Unrecognized vpm subcommand: $1 (and xbps-$1 does not exist) - Try: ${0##*/} help"
     echo
     exit 1
   fi
