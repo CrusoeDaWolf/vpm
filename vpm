@@ -7,8 +7,43 @@
 
 version="0.3"
 
+# set to 0 to permanently disable colors
+color=true
+
+
+case "$1" in
+  "--color=false")
+  color=false
+  shift
+  ;;
+  "--color=true")
+  color=true
+  shift
+  ;;
+esac
+
+
+
+_tput () {
+if [[ $color == true ]]; then
+  tput "$@"
+fi
+
+}
+
+msg () {
+  _tput setaf 110
+  echo -n "["
+  _tput setaf 214
+  echo -n "vpm"
+  _tput setaf 110
+  echo -n "] "
+  echo "$@"
+  _tput sgr0
+}
+
 version () {
-  tput setaf 67
+  _tput setaf 107
   cat <<EOF
  __ ___ __ _ __  
  \ V / '_ \ '  \ 
@@ -16,16 +51,10 @@ version () {
      |/         
 EOF
   echo
-  tput sgr0
-  echo "[vpm $version]"
+  _tput sgr0
+  msg "vpm - Version: $version"
   echo
-  echo "XBPS version: $(xbps-query --version)"
-}
-
-msg () {
-  tput setaf 110
-  echo "[vpm] $@"
-  tput setaf 10
+  msg "XBPS version: $(xbps-query --version)"
 }
 
 # extract versionstring appendix from given package name
@@ -37,27 +66,33 @@ usage () {
   echo
   version
   echo
-  echo "USAGE: vpm <OPTIONS> [<args>]"
-  echo
+  _tput setaf 66
+  echo "USAGE: "
+  _tput setaf 101
+  echo "vpm [OPTIONS] [SUBCMD] [<OPTIONS>] [<args>]"
+  echo 
+  _tput setaf 66
   echo "OPTIONS: "
+  _tput setaf 101
+  echo "--color=<true/false>         - Enable/Disable colorized ou_tput"
   echo
+  _tput setaf 66
+  echo "SUBCOMMANDS: "
+  _tput setaf 109
   echo "sync                         - Synchronize remote repository data"
   echo "update                       - Update the system"
-  echo "repolist                     - list configured repositories"
-  echo
+  echo "repolist                     - List configured repositories"
+  echo "addrepo                      - Add an additional repository"
   echo "info <package(s)>            - Show information about package"
   echo "filelist <package(s)>        - Show file-list of package"
   echo "dependencies <package(s)>    - Show dependendies of package"
   echo "reverse <package(s)>         - Show reverse dependendies of package"
-  echo
   echo "search <name>                - Search for package(s) by name/description"
   echo "searchfile <file>            - Search for package containing <file>"
-  echo
   echo "list                         - List installed packages"
   echo "install <package(s)>         - Install <package(s)>"
   echo "forceinstall <package(s)>    - Force installation of <package(s)>"
   echo "remove <package(s)           - Remove <package(s)"
-  echo
   echo "cleanup                      - Clean up cache directory"
   echo "autoremove                   - Remove orphaned packages"
   echo "help                         - Show usage information"
@@ -100,6 +135,7 @@ case "$1" in
 
   list)
     shift
+    msg "Installed packages: "
     xbps-query -l | while read line; do
     pkgname="$(echo "$line" | cut -d" " -f 2 | xargs -0)"
     version="$(extract_versionstring "$pkgname")"
@@ -111,6 +147,27 @@ case "$1" in
     shift
   ;;
 
+  repolist|listrepos)
+    msg "Configured repositories: "
+    xbps-query -L
+    shift
+    echo
+    msg "Available sub-repositories: "
+    xbps-query -Rs void-repo
+    shift
+    echo
+    msg "Use vpm addrepo <repository> to add a sub-repository."
+    echo
+  ;;
+
+  addrepo)
+    shift
+    while [ "$#" -gt 0 ]; do
+    msg "Adding repository: $1"
+    xbps-install "$1"
+    shift
+    done
+    ;;
   sync)
     msg "Synchronizing remote repository data: (xbps-install -S):"
     xbps-install -S
