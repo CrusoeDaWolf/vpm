@@ -1,11 +1,17 @@
 #!/bin/bash
+# vim: ft=config ts=2 sw=2 sts=2 et
 
 # vpm - void package management utility for
-# XBPS, the X Binary Package System
 
+# XBPS, the X Binary Package System
 # Copyright (c) 2016 Armin Jenewein <a@m2m.pm>
 
-version="0.5a"
+getversion () {
+  cd "${0%/*}"
+  git describe --all --debug --long --tags 2>/dev/null || echo "UNKNOWN"
+}
+
+version="$(getversion)"
 
 # set to "false" to permanently disable colors
 color=true
@@ -16,39 +22,53 @@ case "$1" in
   shift
   ;;
   "--color=true")
-  color=true
+	  color=true
   shift
   ;;
 esac
 
-_tput () {
+color () {
 if [[ $color == true ]]; then
-  tput "$@"
+  case "$1" in
+    [0-9]*)
+      tput setaf "$1"
+    ;;
+    reset)
+      tput sgr0
+    ;;
+    *)
+      tput "$@"
+    ;;
+  esac
 fi
 
 }
 
 msg () {
-  _tput setaf 110
+  color 110
   echo -n "["
-  _tput setaf 214
+  color 214
   echo -n "vpm"
-  _tput setaf 110
+  color 110
   echo -n "] "
   echo "$@"
-  _tput sgr0
+  color sgr0
 }
 
-version () {
-  _tput setaf 107
+banner () {
   cat <<EOF
  __ ___ __ _ __  
- \ V / '_ \ '  \   vpm - a void package management utility
+ \ V / '_ \ '  \   vpm - void package management utility
   \_/| .__/_|_|_|  GitHub: https://github.com/netzverweigerer/vpm
      |/         
 EOF
+}
+
+version () {
+  color 107
+  banner
   echo
-  _tput sgr0
+  color sgr0
   msg "vpm - Version: $version"
   msg "Copyright (c) 2016 Armin Jenewein <a@m2m.pm>"
   msg "XBPS version: $(xbps-query --version)"
@@ -68,20 +88,27 @@ usage () {
   echo
   version
   echo
-  _tput setaf 66
+  color 66
+  echo
   echo "USAGE: "
-  _tput setaf 101
+  color 101
+  echo
   echo "vpm [OPTIONS] [SUBCMD] [<OPTIONS>] [<args>]"
   echo 
-  _tput setaf 66
+  color 66
+  echo
   echo "OPTIONS: "
-  _tput setaf 101
+  color 101
+  echo
   echo "--color=<true/false>         - Enable/Disable colorized output"
   echo "--help                       - (same as: help)"
   echo
-  _tput setaf 66
-  echo "SUBCOMMANDS: "
-  _tput setaf 109
+  color 66
+  echo
+  echo -n "SUBCOMMANDS: "
+  echo "(feel free to prefix them with --, vpm doesn't care.)"
+  echo
+  color 109
   echo "sync                         - Synchronize remote repository data"
   echo "update                       - Update the system"
   echo "repolist                     - List configured repositories"
@@ -101,14 +128,17 @@ usage () {
   echo "autoremove                   - Remove orphaned packages"
   echo "help                         - Show usage information"
   echo
-  _tput setaf 66
+  color 66
+  echo
   echo "XBPS COMPATIBILITY:"
-  _tput setaf 103
+  color 103
   f=(/usr/sbin/xbps-*)
-  echo "vpm also understands ALL xbps commands, too:"
+  echo
+  echo "vpm also understands xbps commands:"
   echo -n "Example: "
   selected=${f[$RANDOM % ${#f[@]}]}
   echo "${0##*/} ${selected##*-} <ARGS>"
+  echo
   echo
 }
 
@@ -128,42 +158,59 @@ fi
 case "$arg" in
   info)
     shift
+    msg "(xbps-query -R $@):"
     xbps-query -R "$@"
+    ret=$?; msg "Execution finished (xbps-query -R $@), return code was: $ret"
+    exit $ret
   ;;
 
   filelist)
     shift
     xbps-query -R -f "$@"
+    ret=$?; msg "Execution finished (xbps-query -R -f \"*/$1\"), return code was: $ret"
+    exit $ret
   ;;
 
   dependencies)
     shift
     xbps-query -R -x "$@"
+    ret=$?; msg "Execution finished (xbps-query -R -x \"*/$1\"), return code was: $ret"
+    exit $ret
   ;;
 
   reverse)
     shift
+    msg "Reverse dependencies for $@ (xbps-query -R $@):"
     xbps-query -R -X "$@"
+    ret=$?; msg "Execution finished (xbps-query -R $@), return code was: $ret"
+    exit $ret
   ;;
 
   searchfile)
     shift
     msg "searchfile: This might take a long time, please be patient..."
+    msg "(xbps-query -R -o \"*/$1\"):"
     sleep 1
     xbps-query -R -o "*/$1"
+    ret=$?; msg "Execution finished (xbps-query -R -o \"*/$1\"), return code was: $ret"
+    exit $ret
   ;;
 
   list)
     shift
     msg "Installed packages: "
+    count=0
     xbps-query -l | while read line; do
+    let count=count+1
     pkgname="$(echo "$line" | cut -d" " -f 2 | xargs -0)"
     version="$(extract_versionstring "$pkgname")"
     pkg="$(extract_packagename "$pkgname")"
     tput setaf 32
-    echo -e -n "${pkg} "
+    echo -e -n "($count) ${pkg} "
     tput setaf 244
-    echo " ${version} "
+    echo -e -n " [${version}] "
+    tput setaf 241
+    echo " [${pkgname}] "
     shift
     done
   ;;
@@ -200,19 +247,24 @@ case "$arg" in
   install)
   shift
   if [ "$#" -lt 1 ]; then
-    msg "ERROR: install: argument required"
+    msg "ERROR: install: argument missing"
     usage
     exit 1
   fi
   args=($@)
   count=0
+  msg "Packages will be installed one-by-one"
+  msg "Use \"forceinstall\" to override this if you know what you're doing."
   for arg in "${args[@]}"; do
   let count=count+1
-  msg "Installing ($count/${#args[@]}): $arg (xbps-install -S $arg) ..."
+  msg "Installing packages: ($count/${#args[@]}): $arg (xbps-install -S $arg) ..."
   xbps-install -S "$arg"
-  msg "[xbps-install -S $arg] return code: $?"
-  if type hash >/dev/null 2>&1; then
-  msg "zsh detected, Don't forget to refresh the command hash table via \"hash -r\"."
+  ret="$?"
+  msg "[xbps-install -S $arg] return code: $ret"
+  if [[ "$ret" -lt 1 ]]; then
+  if type _zsh_highlight_widget_get-line; then
+  msg "You might want to refresh the command hash table via \"hash -r\" or \"rehash\"."
+  fi
   fi
   done
   ;;
@@ -254,6 +306,7 @@ case "$arg" in
   msg "Cleaning up packages (will remove orphaned packages) (xbps-remove -O $@)"
   shift
   xbps-remove -O "$@"
+  msg "[xbps-remove --D $@] return code: $?"
   ;;
 
   help|-h|--help)
