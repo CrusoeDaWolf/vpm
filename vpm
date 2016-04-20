@@ -247,6 +247,7 @@ case "$1" in
 
   ''|*)
   a="$1"
+  shift
   if hash "xbps-${a}" >/dev/null 2>&1; then
     # xbps-<subcommand> found
     msg "(relaying to XBPS): xbps-${a} $@"
