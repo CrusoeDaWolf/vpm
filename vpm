@@ -283,6 +283,7 @@ case "$arg" in
   msg "Cleaning up packages (will remove orphaned packages) (xbps-remove -O $@)"
   shift
   xbps-remove -O "$@"
+  msg "[xbps-remove --D $@] return code: $?"
   ;;
 
   help|-h|--help)
