@@ -43,7 +43,7 @@ version () {
   _tput setaf 107
   cat <<EOF
  __ ___ __ _ __  
- \ V / '_ \ '  \   vpm - a void package management utility
+ \ V / '_ \ '  \   vpm - void package management utility
   \_/| .__/_|_|_|  GitHub: https://github.com/netzverweigerer/vpm
      |/         
 EOF
