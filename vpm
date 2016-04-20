@@ -269,10 +269,6 @@ case "$arg" in
   xbps-install -S "$arg"
   ret="$?"
   msg "[xbps-install -S $arg] return code: $ret"
-  if [[ "$ret" -lt 1 ]]; then
-  if type _zsh_highlight_widget_get-line; then
-  msg "You might want to refresh the command hash table via \"hash -r\" or \"rehash\"."
-  fi
   fi
   done
   ;;
