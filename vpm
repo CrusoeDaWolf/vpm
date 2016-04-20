@@ -46,13 +46,14 @@ version () {
   _tput setaf 107
   cat <<EOF
  __ ___ __ _ __  
- \ V / '_ \ '  \ 
-  \_/| .__/_|_|_|
+ \ V / '_ \ '  \   vpm - a void package management utility
+  \_/| .__/_|_|_|  GitHub: https://github.com/netzverweigerer/vpm
      |/         
 EOF
   echo
   _tput sgr0
   msg "vpm - Version: $version"
+  msg "Copyright (c) 2016 Armin Jenewein <a@m2m.pm>"
   echo
   msg "XBPS version: $(xbps-query --version)"
 }
