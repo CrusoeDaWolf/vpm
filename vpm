@@ -59,6 +59,11 @@ extract_versionstring () {
   echo "$1" | rev | cut -d"-" -f 1 | rev
 }
 
+# extract versionstring appendix from given package name
+extract_packagename () {
+  echo "$1" | rev | cut -d"-" -f 2- | rev
+}
+
 usage () {
   echo
   version
@@ -113,7 +118,14 @@ if [[ "$1" == "" ]]; then
   exit 0
 fi
 
-case "$1" in
+arg="$1"
+
+if [[ "$arg" =~ --.* ]]; then
+b="${arg:2}"
+arg="$b"
+fi
+
+case "$arg" in
   info)
     shift
     xbps-query -R "$@"
@@ -147,24 +159,26 @@ case "$1" in
     xbps-query -l | while read line; do
     pkgname="$(echo "$line" | cut -d" " -f 2 | xargs -0)"
     version="$(extract_versionstring "$pkgname")"
-    echo
-    echo "Package name: $pkgname"
-    echo "Version: $version"
-    done
-    echo
+    pkg="$(extract_packagename "$pkgname")"
+    tput setaf 32
+    echo -e -n "${pkg} "
+    tput setaf 244
+    echo " ${version} "
     shift
+    done
   ;;
 
   repolist|listrepos)
-    msg "Configured repositories: "
+    msg "Configured repositories (xbps-query -L): "
     xbps-query -L
     shift
     echo
-    msg "Available sub-repositories: "
+    msg "Available sub-repositories (xbps-query -Rs void-repo): "
     xbps-query -Rs void-repo
+    msg "[xbps-query -Rs void-repo] return code: $?"
     shift
     echo
-    msg "Use vpm addrepo <repository> to add a sub-repository."
+    msg "Use \"vpm addrepo <repository>\" to add a sub-repository."
     echo
   ;;
 
@@ -173,18 +187,20 @@ case "$1" in
     while [ "$#" -gt 0 ]; do
     msg "Adding repository: $1"
     xbps-install "$1"
+    msg "[xbps-install $arg] return code: $?"
     shift
     done
     ;;
   sync)
     msg "Synchronizing remote repository data: (xbps-install -S):"
     xbps-install -S
-    msg "done."
+    msg "[xbps-install -S] return code: $?"
   ;;
 
   install)
   shift
   if [ "$#" -lt 1 ]; then
+    msg "ERROR: install: argument required"
     usage
     exit 1
   fi
@@ -194,7 +210,10 @@ case "$1" in
   let count=count+1
   msg "Installing ($count/${#args[@]}): $arg (xbps-install -S $arg) ..."
   xbps-install -S "$arg"
-  msg "done."
+  msg "[xbps-install -S $arg] return code: $?"
+  if type hash >/dev/null 2>&1; then
+  msg "zsh detected, Don't forget to refresh the command hash table via \"hash -r\"."
+  fi
   done
   ;;
 
@@ -221,13 +240,14 @@ case "$1" in
   shift
   msg "Running system update (xbps-install -Sduv)"
   xbps-install -Suv
-  msg "done."
+  msg "[xbps-install -Suv] return code: $?"
   ;;
 
   search)
   shift
   msg "Searching for: $@ (xbps-query -Rs $@)"
   xbps-query -Rs "$@"
+  msg "[xbps-query -Rs $@] return code: $?"
   ;;
 
   cleanup)
