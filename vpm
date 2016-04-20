@@ -1,11 +1,17 @@
 #!/bin/bash
-# vim: ts=2 tw=2
+# vim: ft=config ts=2 sw=2 sts=2 et
 
 # vpm - void package management utility for
+
 # XBPS, the X Binary Package System
 # Copyright (c) 2016 Armin Jenewein <a@m2m.pm>
 
-version="0.6"
+getversion () {
+  cd "${0%/*}"
+  git describe --all --debug --long --tags 2>/dev/null || echo "UNKNOWN"
+}
+
+version="$(getversion)"
 
 # set to "false" to permanently disable colors
 color=true
