@@ -1,4 +1,4 @@
-# vpm - (v)oid (p)ackage (m)anager
+# vpm - an attempt to ease everydays life with XBPS
 
 Copyright (c) 2016: Armin Jenewein <a@m2m.pm>
 
@@ -9,7 +9,7 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 # About (What is vpm?)
-vpm is a simple to use, daily-driver enhancement to the awesome XBPS (X Binary Package System), initially designed as a helper tool for use with VoidLinux. Feel free to think "Void Package Management" or something to remember its name, though it is NOT a package manager and shouldn't be confused with XBPS - it's an addon helper tool for XBPS to make your life easier. That's it. 
+vpm is a simple to use, daily-driver enhancement to the awesome XBPS (X Binary Package System), initially designed as a helper tool for use with VoidLinux. Feel free to think "Void Package Management" or something if it helps you remember its name, but please note that it's NOT a "package manager" in the nitpickers understanding of the word - especially vpm shouldn't be confused with XBPS - vpm is just an addon helper tool for XBPS to make your life easier. That's it. 
 
 # Screenshots
 
