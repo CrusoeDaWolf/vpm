@@ -14,8 +14,15 @@ getversion () {
 version="$(getversion)"
 
 # set to "false" to permanently disable colors
-color=true
+# NOTE: you can also set $VPM_COLOR_DISABLE in your
+# environment to completely turn colorization off (for use in scripts)
+if [[ "$VPM_COLOR_DISABLE" ]]; then
+  color=false
+else
+  color=true
+fi
 
+# check for --color
 case "$1" in
   "--color=false")
   color=false
@@ -27,6 +34,7 @@ case "$1" in
   ;;
 esac
 
+# colorize stuff
 color () {
 if [[ $color == true ]]; then
   case "$1" in
@@ -41,9 +49,9 @@ if [[ $color == true ]]; then
     ;;
   esac
 fi
-
 }
 
+# print a message
 msg () {
   color 110
   echo -n "["
@@ -55,6 +63,7 @@ msg () {
   color sgr0
 }
 
+# print vpm banner
 banner () {
   cat <<EOF
  __ ___ __ _ __  
@@ -64,10 +73,11 @@ banner () {
 EOF
 }
 
+# print version information
 version () {
   color 107
-  banner
   echo
+  banner
   color sgr0
   msg "vpm - Version: $version"
   msg "Copyright (c) 2016 Armin Jenewein <a@m2m.pm>"
@@ -85,9 +95,7 @@ extract_packagename () {
 }
 
 usage () {
-  echo
   version
-  echo
   color 66
   echo
   echo "USAGE: "
