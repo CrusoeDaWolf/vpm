@@ -17,4 +17,7 @@ Screenshot of a recent vpm release:
 
 ![alt tag](https://raw.githubusercontent.com/netzverweigerer/vpm/master/screenshots/vpm.png)
 
+Screenshot of vpm in full effect:
+
+![alt tag](https://raw.githubusercontent.com/netzverweigerer/vpm/master/screenshots/vpm2.png)
 
