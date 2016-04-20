@@ -5,7 +5,7 @@
 
 # Copyright (c) 2016 Armin Jenewein <a@m2m.pm>
 
-version="0.5a"
+version="0.6"
 
 # set to "false" to permanently disable colors
 color=true
