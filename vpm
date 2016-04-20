@@ -67,7 +67,7 @@ usage () {
 
 if [[ "$1" == "" ]]; then
   usage
-  exit 1
+  exit 0
 fi
 
 case "$1" in
@@ -180,4 +180,5 @@ case "$1" in
 
 esac
 
+exit 0
 
