@@ -56,12 +56,20 @@ msg () {
 }
 
 banner () {
-  cat <<EOF
- __ ___ __ _ __  
- \ V / '_ \ '  \   vpm - void package management utility
-  \_/| .__/_|_|_|  GitHub: https://github.com/netzverweigerer/vpm
-     |/         
-EOF
+  banner_fg=111
+  banner_bg=142
+  tput setaf $banner_fg
+  echo  ' __ ___ __ _ __  '
+  echo -n " \ V / '_ \ '  \ "
+  tput setaf $banner_bg
+  echo '  vpm - void package management utility'
+  tput setaf $banner_fg
+  echo -n '  \_/| .__/_|_|_|'
+  tput setaf $banner_bg
+  echo '  GitHub: https://github.com/netzverweigerer/vpm'
+  tput setaf $banner_fg
+  echo -n '     |/          '
+  tput sgr0
 }
 
 version () {
