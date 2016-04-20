@@ -1,4 +1,4 @@
-# vpm - an attempt to ease everydays life with XBPS
+# vpm - a void package management utility
 
 Copyright (c) 2016: Armin Jenewein <a@m2m.pm>
 
@@ -13,7 +13,7 @@ vpm is a simple to use, daily-driver enhancement to the awesome XBPS (X Binary P
 
 # Screenshots
 
-Screenshot of a recent vpm release can be found here:
+Screenshot of a recent vpm release:
 
 ![alt tag](https://raw.githubusercontent.com/netzverweigerer/vpm/master/screenshots/vpm.png)
 
