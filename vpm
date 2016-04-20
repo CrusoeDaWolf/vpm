@@ -82,6 +82,7 @@ usage () {
   echo "sync                         - Synchronize remote repository data"
   echo "update                       - Update the system"
   echo "repolist                     - List configured repositories"
+  echo "listrepos                    - (same as: repolist)"
   echo "addrepo                      - Add an additional repository"
   echo "info <package(s)>            - Show information about package"
   echo "filelist <package(s)>        - Show file-list of package"
