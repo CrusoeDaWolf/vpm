@@ -106,7 +106,7 @@ usage () {
   echo "vpm also understands ALL xbps commands, too:"
   echo -n "Example: "
   selected=${f[$RANDOM % ${#f[@]}]}
-  echo "${0##/*} ${selected} <ARGS>"
+  echo "${0##*/} ${selected##*-} <ARGS>"
   
 
 
