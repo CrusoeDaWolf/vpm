@@ -1,6 +1,6 @@
 # vpm - a void package management utility
 
-Copyright (c) 2016: Armin Jenewein <a@m2m.pm>
+Copyright (c) 2016: Armin Jenewein <vpm@m2m.pm>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
@@ -20,4 +20,15 @@ Screenshot of a recent vpm release:
 Screenshot of vpm in full effect:
 
 ![alt tag](https://raw.githubusercontent.com/netzverweigerer/vpm/master/screenshots/vpm2.png)
+
+# Okay, great, but why re-invent the wheel, dude!?
+I personally think I don't, XBPS is hard to use and has a heavy learning curve thanks to its diversed toolchain and hard to remember commandline arguments. vpm tries to help. I wrote this as a personal educational project to improve my understanding of XBPS and VoidLinux, but I hope that others find this useful, too. vpm will also always show the actual xbps commands it translates its actions to, and also display the return codes.
+
+# ZOMG! PONIES!!111
+Rainbows and unicorns, indeed. But you can easily disable all colorization and fancyness, too, to use it in scripts. All otions have human readable and easy to remember syntax, no --long-option-with-multiple-complex-words, no need to even prefix arguments with --, vpm just tries to do its best it can to understand the user.
+
++ Author
+vpm was written by Armin Jenewein (GitHub: @netzverweigerer) <vpm@m2m.pm>
+
+
 
