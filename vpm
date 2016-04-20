@@ -8,12 +8,17 @@
 version="0.3"
 
 version () {
-  echo "vpm $version, Copyright (c) 2016 Armin Jenewein <a@m2m.pm>"
+  tput setaf 67
+  echo "[vpm $version]"
+  tput sgr0
+  echo
   echo "XBPS version: $(xbps-query --version)"
 }
 
 msg () {
-  echo "vpm: $@"
+  tput setaf 67
+  echo "[vpm] $@"
+  tput setaf 10
 }
 
 # extract versionstring appendix from given package name
@@ -81,7 +86,7 @@ case "$1" in
 
   searchfile)
     shift
-    echo "This might take a long time, please be patient..."
+    msg "searchfile: This might take a long time, please be patient..."
     sleep 1
     xbps-query -R -o "*/$1"
   ;;
@@ -94,55 +99,57 @@ case "$1" in
     echo
     echo "Package name: $pkgname"
     echo "Version: $version"
-    echo
     done
     echo
     shift
   ;;
 
   sync)
-    echo "Synchronizing remote repository data ... "
+    msg "Synchronizing remote repository data: (xbps-install -S):"
     xbps-install -S
-    echo "done."
+    msg "done."
   ;;
 
   install)
   shift
-  echo "Installing Package(s): $@"
+  msg "Installing Package(s): $@ (xbps-install -S $@)"
   xbps-install -S "$@"
   ;;
 
   forceinstall)
   shift
-  echo "force-install: Forcing installation (incl. eventual Upgrade/Downgrade) of package(s): $@"
+  msg "Force-Installing Package(s): $@ (xbps-install -Sf $@)"
   xbps-install -Sf "$@"
   ;;
 
   remove)
   shift
+  msg "Removing package(s): $@ (xbps-remove $@)"
   xbps-remove "$@"
   ;;
 
   autoremove)
   shift
-  echo -n "Removing orphaned packages... "
+  msg "autoremove: Removing orphaned packages (xbps-remove -Q)"
   xbps-remove -O
-  echo "done."
+  msg "done."
   ;;
 
   update)
   shift
-  echo "Running system update..."
+  msg "Running system update (xbps-install -Sduv)"
   xbps-install -Suv
+  msg "done."
   ;;
 
   search)
   shift
+  msg "Searching for: $@ (xbps-query -Rs $@)"
   xbps-query -Rs "$@"
   ;;
 
   cleanup)
-  echo "Cleaning up packages (will remove orphaned packages)..."
+  msg "Cleaning up packages (will remove orphaned packages) (xbps-remove -O $@)"
   shift
   xbps-remove -O "$@"
   ;;
@@ -155,10 +162,10 @@ case "$1" in
   a="$1"
   if hash "xbps-${a}" >/dev/null 2>&1; then
     # xbps-<subcommand> found
-    msg "(relaying): xbps-${a} $@"
+    msg "(relaying to XBPS): xbps-${a} $@"
     xbps-${a} $@
   else
-    msg "Unrecognized subcommand: $1"
+    msg "Unrecognized subcommand: $1 - try: $0 help"
     echo
     exit 1
   fi
