@@ -9,8 +9,15 @@ version="0.3"
 
 version () {
   tput setaf 67
-  echo "[vpm $version]"
+  cat <<EOF
+ __ ___ __ _ __  
+ \ V / '_ \ '  \ 
+  \_/| .__/_|_|_|
+     |_|         
+EOF
+  echo
   tput sgr0
+  echo "[vpm $version]"
   echo
   echo "XBPS version: $(xbps-query --version)"
 }
