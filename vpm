@@ -226,7 +226,7 @@ case "$arg" in
   install)
   shift
   if [ "$#" -lt 1 ]; then
-    msg "ERROR: install: argument required"
+    msg "ERROR: install: argument missing"
     usage
     exit 1
   fi
@@ -240,7 +240,7 @@ case "$arg" in
   msg "[xbps-install -S $arg] return code: $ret"
   if [[ "$ret" -lt 17 ]]; then
   if type hash >/dev/null 2>&1; then
-  msg "zsh detected, Don't forget to refresh the command hash table via \"hash -r\"."
+  msg "Don't forget to refresh the command hash table via \"hash -r\" or \"rehash\"."
   fi
   fi
   done
