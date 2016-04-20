@@ -11,13 +11,17 @@
 
 version="0.2"
 
+msg () {
+  echo "vpm - $@"
+}
+
 usage () {
   echo
-  echo "[vpm] - voidlinux package management utility"
+  echo "vpm ${version}"
   echo
-  echo "USAGE: "
   echo
-  echo "vpm <OPTIONS> [<args>]"
+  echo "USAGE: vpm <OPTIONS> [<args>]"
+  echo
   echo
   echo "OPTIONS: "
   echo
@@ -33,14 +37,14 @@ usage () {
   echo "search <name>                - Search for package(s) by name/description"
   echo "searchfile <file>            - Search for package containing <file>"
   echo
+  echo "list                         - List installed packages"
   echo "install <package(s)>         - Install <package(s)>"
   echo "forceinstall <package(s)>    - Force installation of <package(s)>"
+  echo "remove <package(s)           - Remove <package(s)"
   echo
-  echo "list                         - List installed packages"
-  echo "remove <package(s)           - Remove (uninstall) <package(s)"
-  echo "cleanup                      - Empty (clean-up) cache directory"
+  echo "cleanup                      - Clean up cache directory"
   echo "autoremove                   - Remove orphaned packages"
-  echo "help                         - Show this help screen"
+  echo "help                         - Show usage information"
   echo
 }
 
@@ -55,83 +59,102 @@ case "$1" in
   shift
   xbps-query -R "$@"
   ;;
+
   filelist)
   shift
   xbps-query -R -f "$@"
   ;;
+
   dependencies)
   shift
   xbps-query -R -x "$@"
   ;;
+
   reverse)
   shift
   xbps-query -R -X "$@"
   ;;
+
   searchfile)
   shift
   echo "This might take a long time, please be patient..."
   sleep 1
   xbps-query -R -o "*/$1"
   ;;
+
   list)
   echo
   xbps-query -l
   echo
   shift
   ;;
+
   sync)
   echo "Synchronizing remote repository data ... "
   xbps-install -S
   echo "done."
   ;;
+
   install)
   shift
   echo "Installing Package(s): $@"
   xbps-install -S "$@"
   ;;
+
   forceinstall)
   shift
   echo "force-install: Forcing installation (incl. eventual Upgrade/Downgrade) of package(s): $@"
   xbps-install -Sf "$@"
   ;;
+
   remove)
   shift
   xbps-remove "$@"
   ;;
+
   autoremove)
   shift
   echo -n "Removing orphaned packages... "
   xbps-remove -O
   echo "done."
   ;;
+
   update)
   shift
   echo "Running system update..."
   xbps-install -Suv
   ;;
+
   search)
   shift
   xbps-query -Rs "$@"
   ;;
+
   cleanup)
   echo "Cleaning up packages (will remove orphaned packages)..."
   shift
   xbps-remove -O "$@"
   ;;
-  help|--help)
+
+  help|-h|--help)
   usage
   ;;
+
   ''|*)
   a="$1"
-  if hash "xbps-${a}" >/dev/null 2>&1; then echo "Running: xbps-${a} $@"; xbps-${a} $@; else echo "No XBPS sub-command binary found for: $@" && exit 1; fi
-  exit 1
-  echo
-  echo "Unrecognized or no subcommand: $1"
-  shift
-  echo "Try: xbps-${a} $@ "
-  usage
-  exit 1
+  if hash "xbps-${a}" >/dev/null 2>&1; then
+    # xbps-<subcommand> found
+    msg "(relaying): xbps-${a} $@"
+    xbps-${a} $@
+  else
+    echo
+    echo "Unrecognized subcommand: $1"
+    echo
+    usage
+    exit 1
+  fi
   ;;
+
 esac
 
 
