@@ -128,11 +128,11 @@ usage () {
   color 101
   echo "--color=<true/false>         - Enable/Disable colorized output"
   echo "--help                       - (same as: help)"
-  echo "--show-translations          - Show XBPS command translations in help output"
+  echo "--show-translations          - Show XBPS command translations for vpm sub-commands"
   echo
   color 66
   echo
-  echo "SUBCOMMANDS (set \$VPM_SHOW_TRANSLATIONS to see what they translate to): "
+  echo "SUBCOMMANDS: "
   color 109
   echo "sync                         - Synchronize remote repository data"
   t "xbps-install -S"
