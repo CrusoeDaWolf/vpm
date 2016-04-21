@@ -356,9 +356,9 @@ case "$arg" in
 
   update)
   shift
-  msg "Running system update (xbps-install -Sduv)"
-  xbps-install -Sduv
-  msg "[xbps-install -Sduv] return code: $?"
+  msg "Running system update (xbps-install -Suv)"
+  xbps-install -Suv
+  msg "[xbps-install -Suv] return code: $?"
   ;;
 
   search)
