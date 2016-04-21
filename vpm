@@ -25,6 +25,10 @@ case "$1" in
 	  color=true
   shift
   ;;
+  --show-translations)
+  show_translations=1
+  shift
+  ;;
 esac
 
 color () {
@@ -68,13 +72,14 @@ banner () {
   echo  ' __ ___ __ _ __  '
   echo -n " \ V / '_ \ '  \ "
   tput setaf $banner_bg
-  echo '  vpm - void package management utility'
+  echo '  vpm - void package management utility for XBPS'
   tput setaf $banner_fg
   echo -n '  \_/| .__/_|_|_|'
   tput setaf $banner_bg
   echo '  GitHub: https://github.com/netzverweigerer/vpm'
   tput setaf $banner_fg
-  echo -n '     |/          '
+  echo '     |/          '
+  echo '     ´          '
   tput sgr0
 }
 
@@ -98,6 +103,15 @@ extract_packagename () {
   echo "$1" | rev | cut -d"-" -f 2- | rev
 }
 
+t () {
+if [[ "$show_translations" != "" ]]; then
+tput setaf 242
+echo "                             $@"
+echo
+tput setaf 109
+fi
+}
+
 usage () {
   echo
   version
@@ -106,58 +120,72 @@ usage () {
   echo
   echo "USAGE: "
   color 101
-  echo
   echo "vpm [OPTIONS] [SUBCMD] [<OPTIONS>] [<args>]"
   echo 
   color 66
   echo
   echo "OPTIONS: "
   color 101
-  echo
   echo "--color=<true/false>         - Enable/Disable colorized output"
   echo "--help                       - (same as: help)"
+  echo "--show-translations          - Show XBPS command translations"
   echo
   color 66
   echo
-  echo -n "SUBCOMMANDS: "
-  echo "(feel free to prefix them with --, vpm doesn't care.)"
-  echo
+  echo "SUBCOMMANDS (set \$VPM_SHOW_TRANSLATIONS to see what they translate to): "
   color 109
   echo "sync                         - Synchronize remote repository data"
+  t "xbps-install -S"
   echo "update                       - Update the system"
+  t "xbps-install -Sduv"
   echo "repolist                     - List configured repositories"
   echo "listrepos                    - (same as: repolist)"
-  echo "addrepo                      - Add an additional repository"
+  t "xbps-query -v -L"
+  echo "addrepo <args>               - Add an additional repository"
+  t "xbps-install <args>"
   echo "info <package>               - Show information about <package>"
+  t "xbps-query-v -R"
   echo "filelist <package>           - Show file-list of <package>"
+  t "xbps-query -v -R -f"
   echo "deps <package>               - Show dependendies of <package>"
+  t "xbps-query -v -R -x"
   echo "reverse <package>            - Show reverse dependendies of <package>"
+  t "xbps-query -v -R -X"
   echo "search <name>                - Search for package by <name>"
+  t "xbps-query -v -Rs"
   echo "searchfile <file>            - Search for package containing <file>"
+  t "xbps-query -v -R -o \"*/$1\""
   echo "list                         - List installed packages"
+  t "xbps-query -v -l"
   echo "install <package>            - Install <package>"
+  t "xbps-install -S"
   echo "listalternatives             - List alternative candiates"
+  t "xbps-alternatives -l"
   echo "setalternative <package>     - Set alternative for <package>"
+  t "xbps-alternatives -s"
   echo "reconfigure <package>        - Re-configure installed <package>"
+  t "xbps-reconfigure -v"
   echo "forceinstall <package>       - Force installation of <package>"
+  t "xbps-install -f"
   echo "remove <package)             - Remove <package>"
+  t "xbps-remove -v "
   echo "removerecursive <package>    - Recursively remove package (and its dependencies)"
+  t "xbps-remove -v -R"
   echo "cleanup                      - Clean up cache directory"
+  t "xbps-remove -v -O"
   echo "autoremove                   - Remove orphaned packages"
+  t "xbps-remove -v -O"
   echo "help                         - Show usage information"
   echo
   color 66
   echo
-  echo "XBPS COMPATIBILITY:"
+  echo "XBPS COMPATIBILITY COOLNESS:"
   color 103
   f=(/usr/sbin/xbps-*)
-  echo
-  echo "vpm also understands xbps commands:"
+  echo "vpm also understands all unknown XBPS sub-commands, too:"
   echo -n "Example: "
   selected=${f[$RANDOM % ${#f[@]}]}
-  echo "${0##*/} ${selected##*-} <ARGS>"
-  echo
-  echo "(see /usr/sbin/xbps-*)"
+  echo "${0##*/} ${selected##*-} <ARGS> - see also: /usr/sbin/xbps-*"
   echo 
 }
 
