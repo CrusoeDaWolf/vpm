@@ -128,7 +128,7 @@ usage () {
   color 101
   echo "--color=<true/false>         - Enable/Disable colorized output"
   echo "--help                       - (same as: help)"
-  echo "--show-translations          - Show XBPS command translations"
+  echo "--show-translations          - Show XBPS command translations in help output"
   echo
   color 66
   echo
