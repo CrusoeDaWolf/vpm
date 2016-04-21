@@ -74,8 +74,7 @@ banner () {
   tput setaf $banner_bg
   echo '  GitHub: https://github.com/netzverweigerer/vpm'
   tput setaf $banner_fg
-  echo '     |/          '
-  echo '     ´ '
+  echo -n '     |/          '
   tput sgr0
 }
 
@@ -316,18 +315,8 @@ case "$arg" in
 
   reconfigure)
   shift
-  case "$@" in
-  '')
-  msg "${0##*/} reconfigure: no package(s) specified. See ${0##*/} help."
-  exit 1
-  ;;
-  *)
-  for pkg in "$@"; do
-  msg "reconfigure: Re-configuring package(s) (xbps-reconfigure -v $pkg):"
-  xbps-reconfigure -v "$pkg"
-  done
-  ;;
-  esac
+  msg "reconfigure: Re-configuring package(s) (xbps-reconfigure -v $@):"
+  xbps-reconfigure -v "$@"
   ;; 
 
   autoremove)
@@ -340,8 +329,8 @@ case "$arg" in
   update)
   shift
   msg "Running system update (xbps-install -Sduv)"
-  xbps-install -Suv
-  msg "[xbps-install -Suv] return code: $?"
+  xbps-install -Sduv
+  msg "[xbps-install -Sduv] return code: $?"
   ;;
 
   search)
@@ -379,258 +368,5 @@ case "$arg" in
 esac
 
 exit 0
-
-
-
-
-
-
-
-xbps-query
-==========
-
---cachedir           -c  -- Full path to cachedir                                                                                                                                                                               
---cat                    -- Print file from binpkg to stdout                                                                                                                                                                    
---config             -C  -- Full path to configuration file                                                                                                                                                                     
---debug              -d  -- Debug mode shown to stderr                                                                                                                                                                          
---deps               -x  -- Show dependencies                                                                                                                                                                                   
---files              -f  -- Show package files                                                                                                                                                                                  
---fulldeptree            -- Full dependency tree for -x/--deps                                                                                                                                                                  
---help               -h  -- Print help usage                                                                                                                                                                                    
---ignore-conf-repos  -i  -- Ignore repositories defined in xbps.d                                                                                                                                                               
---list-hold-pkgs     -H  -- List packages on hold state                                                                                                                                                                         
---list-manual-pkgs   -m  -- List packages installed explicitly                                                                                                                                                                  
---list-orphans       -O  -- List package orphans                                                                                                                                                                                
---list-pkgs          -l  -- List installed packages                                                                                                                                                                             
---list-repos         -L  -- List registered repositories                                                                                                                                                                        
---memory-sync        -M  -- Keep remote repository data in memory only                                                                                                                                                          
---ownedby            -o  -- Search for package files                                                                                                                                                                            
---property           -p  -- Show properties                                                                                                                                                                                     
---regex                  -- Use Extended Regular Expressions to match                                                                                                                                                           
---repository         -R  -- Enable repository mode                                                                                                                                                                              
---repository             -- Add repository to the top of the list                                                                                                                                                               
---revdeps            -X  -- Show reverse dependencies                                                                                                                                                                           
---rootdir            -r  -- Full path to rootdir                                                                                                                                                                                
---search             -s  -- Search for packages                                                                                                                                                                                 
---show               -S  -- Show information                                                                                                                                                                                    
---verbose            -v  -- Verbose messages                                                                                                                                                                                    
---version            -V  -- Show XBPS version                                                                                                                                                                                   
-
-
-xbps-install
-============
-
-Usage: xbps-install [OPTIONS] [PKGNAME...]
-
-OPTIONS
- -A --automatic           Set automatic installation mode
- -C --config <dir>        Path to confdir (xbps.d)
- -c --cachedir <dir>      Path to cachedir
- -d --debug               Debug mode shown to stderr
- -f --force               Force package re-installation
-                          If specified twice, all files will be
-                          overwritten.
- -h --help                Print help usage
- -i --ignore-conf-repos   Ignore repositories defined in xbps.d
- -U --unpack-only         Unpack packages in transaction, do not configure them
- -M --memory-sync         Remote repository data is fetched and stored
-                          in memory, ignoring on-disk repodata archives.
- -n --dry-run             Dry-run mode
- -R,--repository=<url>    Add repository to the top of the list.
-                          This option can be specified multiple times.
- -r --rootdir <dir>       Full path to rootdir
- -S --sync                Sync remote repository index
- -u --update              Update target package(s)
- -v --verbose             Verbose messages
- -y --yes                 Assume yes to all questions
- -V --version             Show XBPS version
-
-
-
-=== xbps-alternatives
-Usage: xbps-alternatives [OPTIONS] MODE
-
-OPTIONS
- -C --config <dir>   Path to confdir (xbps.d)
- -d --debug          Debug mode shown to stderr
- -g --group <name>   Group of alternatives to match
- -h --help           Print usage help
- -r --rootdir <dir>  Full path to rootdir
- -v --verbose        Verbose messages
- -V --version        Show XBPS version
-MODE
- -l --list [PKG]     List all alternatives or from PKG
- -s --set PKG        Set alternatives for PKG
-
-
-
-
-=== xbps-create
-Usage: xbps-create [OPTIONS] -A <arch> -n <pkgver> -s "<desc>" destdir
-
-OPTIONS
- -A --architecture   Package architecture (e.g: noarch, i686, etc).
- -B --built-with     Package builder string (e.g: xbps-src-30).
- -C --conflicts      Conflicts (blank separated list,
-                     e.g: 'foo>=2.0 blah<=2.0').
- -D --dependencies   Dependencies (blank separated list,
-                     e.g: 'foo>=1.0_1 blah<2.1').
- -F --config-files   Configuration files (blank separated list,
-                     e.g '/etc/foo.conf /etc/foo-blah.conf').
- -H --homepage       Homepage.
- -h --help           Show help.
- -l --license        License.
- -M --mutable-files  Mutable files list (blank separated list,
-                     e.g: '/usr/lib/foo /usr/bin/blah').
- -m --maintainer     Maintainer.
- -n --pkgver         Package name/version tuple (e.g `foo-1.0_1').
- -P --provides       Provides (blank separated list,
-                     e.g: 'foo-9999 blah-1.0').
- -p --preserve       Enable package preserve boolean.
- -q --quiet          Work silently.
- -R --replaces       Replaces (blank separated list,
-                     e.g: 'foo>=1.0 blah<2.0').
- -r --reverts        Reverts (blank separated list,
-                     e.g: '1.0_1 2.0_3').
- -S --long-desc      Long description (80 cols per line).
- -s --desc           Short description (max 80 characters).
- -t --tags           A list of tags/categories (blank separated list).
- -V --version        Prints XBPS release version.
- --alternatives      List of available alternatives this pkg provides.
-                     This expects a blank separated list of <name>:<symlink>:<target>, e.g
-                     'vi:/usr/bin/vi:/usr/bin/vim foo:/usr/bin/foo:/usr/bin/blah'.
- --build-options     A string with the used build options.
- --compression       Compression format: none, gzip, bzip2, xz (default).
- --shlib-provides    List of provided shared libraries (blank separated list,
-                     e.g 'libfoo.so.1 libblah.so.2').
- --shlib-requires    List of required shared libraries (blank separated list,
-                     e.g 'libfoo.so.1 libblah.so.2').
-
-NOTE:
- At least three flags are required: architecture, pkgver and desc.
-
-EXAMPLE:
- $ xbps-create -A noarch -n foo-1.0_1 -s "foo pkg" destdir
-
-
-
-=== xbps-pkgdb
-Usage: xbps-pkgdb [OPTIONS] [PKGNAME...]
-
-OPTIONS
- -a --all                               Process all packages
- -C --config <dir>                      Path to confdir (xbps.d)
- -d --debug                             Debug mode shown to stderr
- -h --help                              Print usage help
- -m --mode <auto|manual|hold|unhold|repolock|repounlock>
-                                        Change PKGNAME to this mode
- -r --rootdir <dir>                     Full path to rootdir
- -u --update                            Update pkgdb to the latest format
- -v --verbose                           Verbose messages
- -V --version                           Show XBPS version
-
-
-
-=== xbps-reconfigure
-Usage: xbps-reconfigure [OPTIONS] [PKGNAME...]
-
-OPTIONS
- -a --all            Process all packages
- -C --config <dir>   Path to confdir (xbps.d)
- -d --debug          Debug mode shown to stderr
- -f --force          Force reconfiguration
- -h --help           Print usage help
- -i --ignore PKG     Ignore PKG with -a/--all
- -r --rootdir <dir>  Full path to rootdir
- -v --verbose        Verbose messages
- -V --version        Show XBPS version
-
-
-
-=== xbps-rindex
-Usage: xbps-rindex [OPTIONS] MODE ARGUMENTS
-
-OPTIONS
- -d --debug                        Debug mode shown to stderr
- -f --force                        Force mode to overwrite entry in add mode
- -h --help                         Show help usage
- -v --verbose                      Verbose messages
- -V --version                      Show XBPS version
-    --privkey <key>                Path to the private key for signing
-    --signedby <string>            Signature details, i.e "name <email>"
-
-MODE
- -a --add <repodir/pkg> ...        Add package(s) to repository index
- -c --clean <repodir>              Clean repository index
- -r --remove-obsoletes <repodir>   Removes obsolete packages from repository
- -s --sign <repodir>               Initialize repository metadata signature
- -S --sign-pkg archive.xbps ...    Sign binary package archive
-
-
-
-
-=== xbps-uhelper
-usage: xbps-uhelper [options] [action] [args]
-
-  Available actions:
-    binpkgarch, binpkgver, cmpver, digest, fetch, getpkgdepname,
-    getpkgname, getpkgrevision, getpkgversion, pkgmatch, version,
-    real-version, arch, getsystemdir
-
-  Action arguments:
-    binpkgarch	<binpkg>
-    binpkgver	<binpkg>
-    cmpver		<instver> <reqver>
-    digest		<file> <file1+N>
-    fetch		<URL[>filename]> <URL1+N[>filename]>
-    getpkgdepname	<string>
-    getpkgdepversion	<string>
-    getpkgname		<string>
-    getpkgrevision	<string>
-    getpkgversion	<string>
-    pkgmatch		<pkg-version> <pkg-pattern>
-    version		<pkgname>
-    real-version	<pkgname>
-
-  Options shared by all actions:
-    -C		Path to xbps.conf file.
-    -d		Debugging messages to stderr.
-    -r		<rootdir>
-    -V		Prints the xbps release version
-
-  Examples:
-    $ xbps-uhelper cmpver 'foo-1.0_1' 'foo-2.1_1'
-    $ xbps-uhelper digest file ...
-    $ xbps-uhelper fetch http://www.foo.org/file.blob ...
-    $ xbps-uhelper getpkgdepname 'foo>=0'
-    $ xbps-uhelper getpkgdepversion 'foo>=0'
-    $ xbps-uhelper getpkgname foo-2.0_1
-    $ xbps-uhelper getpkgrevision foo-2.0_1
-    $ xbps-uhelper getpkgversion foo-2.0_1
-    $ xbps-uhelper pkgmatch foo-1.0_1 'foo>=1.0'
-    $ xbps-uhelper version pkgname
-
-
-
-=== xbps-remove
-Usage: xbps-remove [OPTIONS] [PKGNAME...]
-
-OPTIONS
- -C --config <dir>        Path to confdir (xbps.d)
- -c --cachedir <dir>      Path to cachedir
- -d --debug               Debug mode shown to stderr
- -F --force-revdeps       Force package removal even with revdeps or
-                          unresolved shared libraries
- -f --force               Force package files removal
- -h --help                Print help usage
- -n --dry-run             Dry-run mode
- -O --clean-cache         Remove obsolete packages in cachedir
- -o --remove-orphans      Remove package orphans
- -R --recursive           Recursively remove dependencies
- -r --rootdir <dir>       Full path to rootdir
- -v --verbose             Verbose messages
- -y --yes                 Assume yes to all questions
- -V --version             Show XBPS version
-
 
 
