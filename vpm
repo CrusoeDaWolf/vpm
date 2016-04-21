@@ -121,10 +121,8 @@ usage () {
   echo "update                       - Update the system"
   echo "repolist                     - List configured repositories"
   echo "listrepos                    - (same as: repolist)"
-  echo "addrepo <args>               - add sub-repository"
-  echo "                               (e.g. <multilib|nonfree|multilib-nonfree>"
-  echo "info <package>               - Show information about <package> (remote, see"
-  echo "                               \"localinfo\" for local lookup)"
+  echo "addrepo                      - Add an additional repository"
+  echo "info <package>               - Show information about <package>"
   echo "filelist <package>           - Show file-list of <package>"
   echo "dependencies <package>       - Show dependendies of <package>"
   echo "reverse <package>            - Show reverse dependendies of <package>"
@@ -242,9 +240,12 @@ case "$arg" in
   addrepo)
     shift
     while [ "$#" -gt 0 ]; do
-    msg "Adding repository (xbps-install void-repo-$1): $1"
-    xbps-install "void-repo-$1" || xbps-install "$1"
+    msg "Adding repository: $1"
+    xbps-install "$1"
     msg "[xbps-install $arg] return code: $?"
+    msg "Synchronizing remote repository data (xbps-install -S): "
+    xbps-install -S
+    msg "[xbps-install -S] return code: $?"
     shift
     done
     ;;
