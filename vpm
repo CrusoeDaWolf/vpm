@@ -10,6 +10,7 @@ colorlogo=77
 colorheader=111
 colortext=37
 colorgray=248
+colordarkgray=245
 colorbrackets=242
 
 getversion () {
@@ -217,7 +218,6 @@ usage () {
   color reset
 }
 
-
 if [[ "$1" == "" ]]; then
   usage
   exit 0
@@ -282,19 +282,19 @@ case "$arg" in
     pkg="$(printf ${line#* } | xargs)"
     pkgname="$(printf '%s\n' "${pkg%-*}")"
     version="$(printf '%s\n' "${pkg##*-}")"
-    color 38
+    color $colortext
     echo -n "$pkgname "
-    color 241
+    color $colorbrackets
     echo -n " ("
-    color 106
+    color $colorgray
     echo -n "$version"
-    color 241
+    color $colorbrackets
     echo -n ") "
-    color 241
+    color $colorbrackets
     echo -n " ["
-    color 247
+    color $colordarkgray
     echo -n "$pkg"
-    color 241
+    color $colorbrackets
     echo "]"
     color reset
     shift
@@ -385,7 +385,6 @@ case "$arg" in
   msg "[xbps-install -S ${arg}-devel] return code: $ret"
   done
   ;;
-
 
   forceinstall)
   shift
