@@ -146,7 +146,7 @@ usage () {
   color $colorheader
   echo "USAGE: "
   color $colorgray
-  echo "vpm [OPTIONS] [SUBCMD] [<OPTIONS>] [<args>]"
+  echo "vpm [OPTIONS] [SUBCOMMANDS] [<OPTIONS>] [<args>]"
   echo 
   color $colorheader
   echo "OPTIONS: "
