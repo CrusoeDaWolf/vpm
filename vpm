@@ -71,7 +71,7 @@ fi
 msg () {
   color 110
   echo -n "["
-  color 214
+  color 37
   echo -n "vpm"
   color 110
   echo -n "] "
