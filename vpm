@@ -69,12 +69,13 @@ fi
 }
 
 msg () {
-  color 110
+  color 243
   echo -n "["
-  color 37
+  color 38
   echo -n "vpm"
-  color 110
+  color 243
   echo -n "] "
+  color 245
   echo "$@"
   color sgr0
 }
@@ -86,8 +87,8 @@ fi
 
 
 banner () {
-  banner_fg=111
-  banner_bg=142
+  banner_fg=102
+  banner_bg=66
   color $banner_fg
   echo  ' __ ___ __ _ __  '
   echo -n " \ V / '_ \ '  \ "
@@ -137,12 +138,12 @@ usage () {
   echo
   color 66
   echo "USAGE: "
-  color 101
+  color 247
   echo "vpm [OPTIONS] [SUBCMD] [<OPTIONS>] [<args>]"
   echo 
   color 66
   echo "OPTIONS: "
-  color 101
+  color 247
   echo "--color=<yes|no|auto>        - Enable/Disable colorized output (default: auto)"
   echo "--help                       - (same as: help)"
   echo "--help-pager                 - (same as: helppager)"
@@ -151,7 +152,7 @@ usage () {
   echo
   color 66
   echo "SUBCOMMANDS: "
-  color 109
+  color 247
   echo "sync                         - Synchronize remote repository data"
   t "xbps-install -S"
   echo "update                       - Update the system"
@@ -200,7 +201,7 @@ usage () {
   echo
   color 66
   echo "XBPS COMPATIBILITY COOLNESS:"
-  color 103
+  color 247
   f=(/usr/sbin/xbps-*)
   echo "vpm also understands all unknown XBPS sub-commands, too:"
   echo -n "Example: "
