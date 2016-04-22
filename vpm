@@ -71,7 +71,7 @@ fi
 msg () {
   color 243
   echo -n "["
-  color 38
+  color 77
   echo -n "vpm"
   color 243
   echo -n "] "
@@ -87,7 +87,7 @@ fi
 
 
 banner () {
-  banner_fg=102
+  banner_fg=77
   banner_bg=66
   color $banner_fg
   echo  ' __ ___ __ _ __  '
