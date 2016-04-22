@@ -16,6 +16,7 @@ version="$(getversion)"
 # set to "true" to enable colorized output, or to "auto" to use auto-detection via $TERM
 color=auto
 
+# enable auto colorization
 autocolor () {
   case "$TERM" in
     *256*color*)
@@ -24,22 +25,21 @@ autocolor () {
   esac
 }
 
-if [[ "$1" == "--color=auto" ]]; then
-  shift
-  autocolor
-fi
-
-if [[ "$color" == "auto" ]]; then
-  autocolor
-fi
-
 # verbose mode
 verbose=false
 
 case "$1" in
   --color=true|--color=yes|--color=on)
-    shift
 	  color=true
+    shift
+  ;;
+  --color=auto)
+    autocolor
+    shift
+  ;;
+  --color=false|--color=off|--color=no)
+    color=false
+    shift
   ;;
   --verbose=true)
     shift
@@ -145,6 +145,7 @@ usage () {
   color 101
   echo "--color=<yes|no|auto>        - Enable/Disable colorized output (default: auto)"
   echo "--help                       - (same as: help)"
+  echo "--help-pager                 - (same as: helppager)"
   echo "--show-translations          - Show XBPS command translations for vpm sub-commands"
   echo "--verbose                    - Verbose mode (shows XBPS command translations during execution)"
   echo
@@ -195,6 +196,7 @@ usage () {
   echo "autoremove                   - Remove orphaned packages"
   t "xbps-remove -v -O"
   echo "help                         - Show usage information"
+  echo "helppager                    - Show usage information (will pipe output to less/more)"
   echo
   color 66
   echo "XBPS COMPATIBILITY COOLNESS:"
@@ -432,6 +434,14 @@ case "$arg" in
 
   help|-h|--help)
   usage
+  ;;
+
+  helppager|help-pager)
+    if hash less >/dev/null 2>&1; then
+      $0 --color=off help | less
+    else
+      $0 --color=off help | more
+    fi
   ;;
 
   ''|*)
