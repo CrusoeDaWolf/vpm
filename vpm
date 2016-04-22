@@ -13,7 +13,7 @@ getversion () {
 
 version="$(getversion)"
 
-# set to "true" to enable colorized output, or to "auto" to use auto-detection via $TERM
+# set to "true" to enable colorized output, or "auto" to use auto-detection via $TERM
 color=auto
 
 # enable auto colorization
@@ -52,7 +52,7 @@ case "$1" in
 esac
 
 color () {
-if [[ $color == true ]]; then
+if [[ ! $color == "false" ]]; then
   case "$1" in
     [0-9]*)
       tput setaf "$1"
