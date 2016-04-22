@@ -6,6 +6,12 @@
 # XBPS, the X Binary Package System
 # Copyright (c) 2016 Armin Jenewein <a@m2m.pm>
 
+colorlogo=77
+colorheader=111
+colortext=31
+colorgray=248
+colorbrackets=242
+
 getversion () {
   cd "${0%/*}"
   git describe --all --debug --long --tags 2>/dev/null || echo "UNKNOWN"
@@ -69,13 +75,13 @@ fi
 }
 
 msg () {
-  color 243
+  color $colorbrackets
   echo -n "["
   color 77
   echo -n "vpm"
-  color 243
+  color $colorbrackets
   echo -n "] "
-  color 245
+  color $colortext
   echo "$@"
   color sgr0
 }
@@ -89,16 +95,16 @@ fi
 banner () {
   banner_fg=77
   banner_bg=66
-  color $banner_fg
+  color $colorlogo
   echo  ' __ ___ __ _ __  '
   echo -n " \ V / '_ \ '  \ "
-  color $banner_bg
+  color $colorgray
   echo '  vpm - void package management utility for XBPS'
-  color $banner_fg
+  color $colorlogo
   echo -n '  \_/| .__/_|_|_|'
-  color $banner_bg
+  color $colorgray
   echo '  GitHub: https://github.com/netzverweigerer/vpm'
-  color $banner_fg
+  color $colorlogo
   echo '     |/          '
   echo '     ´          '
   color reset
@@ -136,23 +142,23 @@ usage () {
   echo
   version
   echo
-  color 66
+  color $colorheader
   echo "USAGE: "
-  color 247
+  color $colorgray
   echo "vpm [OPTIONS] [SUBCMD] [<OPTIONS>] [<args>]"
   echo 
-  color 66
+  color $colorheader
   echo "OPTIONS: "
-  color 247
+  color $colorgray
   echo "--color=<yes|no|auto>        - Enable/Disable colorized output (default: auto)"
   echo "--help                       - (same as: help)"
   echo "--help-pager                 - (same as: helppager)"
   echo "--show-translations          - Show XBPS command translations for vpm sub-commands"
   echo "--verbose                    - Verbose mode (shows XBPS command translations during execution)"
   echo
-  color 66
+  color $colorheader
   echo "SUBCOMMANDS: "
-  color 247
+  color $colorgray
   echo "sync                         - Synchronize remote repository data"
   t "xbps-install -S"
   echo "update                       - Update the system"
@@ -199,9 +205,9 @@ usage () {
   echo "help                         - Show usage information"
   echo "helppager                    - Show usage information (will pipe output to less/more)"
   echo
-  color 66
+  color $colorheader
   echo "XBPS COMPATIBILITY COOLNESS:"
-  color 247
+  color $colorgray
   f=(/usr/sbin/xbps-*)
   echo "vpm also understands all unknown XBPS sub-commands, too:"
   echo -n "Example: "
