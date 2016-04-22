@@ -182,7 +182,7 @@ usage () {
   t "xbps-install -S"
   echo "devinstall <package(s)>      - Install <package> (and corresponding <package>-devel package(s))"
   t "xbps-install -S <package> <package>-devel"
-  echo "listalternatives             - List alternative candiates"
+  echo "listalternatives             - List alternative candidates"
   t "xbps-alternatives -l"
   echo "setalternative <package>     - Set alternative for <package>"
   t "xbps-alternatives -s"
