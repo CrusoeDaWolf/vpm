@@ -264,13 +264,23 @@ case "$arg" in
 
   searchfile)
     shift
-    msg "searchfile: This might take a long time, please be patient..."
+    msg "searchfile (xbps-query -v -o \"*/$1\"):"
+    sleep 1
+    xbps-query -v -o "*/$1"
+    ret=$?; msg "Execution finished (xbps-query -v -R -o \"*/$1\"), return code was: $ret"
+    exit $ret
+  ;;
+
+   remotesearchfile)
+    shift
+    msg remote"remotesearchfile: This might take a long time, please be patient..."
     msg "(xbps-query -v -R -o \"*/$1\"):"
     sleep 1
     xbps-query -v -R -o "*/$1"
     ret=$?; msg "Execution finished (xbps-query -v -R -o \"*/$1\"), return code was: $ret"
     exit $ret
   ;;
+
 
   list)
     shift
