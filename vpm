@@ -106,7 +106,6 @@ banner () {
 version () {
   color 107
   banner
-  echo
   color sgr0
   msg "vpm - Version: $version"
   msg "Copyright (c) 2016 Armin Jenewein <a@m2m.pm>"
@@ -198,7 +197,6 @@ usage () {
   echo "help                         - Show usage information"
   echo
   color 66
-  echo
   echo "XBPS COMPATIBILITY COOLNESS:"
   color 103
   f=(/usr/sbin/xbps-*)
