@@ -176,8 +176,6 @@ usage () {
   t "xbps-query -v -Rs"
   echo "searchfile <file>            - Search for package containing <file> (local)"
   t "xbps-query -v -o \"*/$1\""
-  echo "remotesearchfile <file>      - Search for package containing <file> (remote)"
-  t "xbps-query -v -R -o \"*/$1\""
   echo "list                         - List installed packages"
   t "xbps-query -v -l"
   echo "install <package(s)>         - Install <package(s)>"
@@ -270,17 +268,6 @@ case "$arg" in
     ret=$?; msg "Execution finished (xbps-query -v -R -o \"*/$1\"), return code was: $ret"
     exit $ret
   ;;
-
-   remotesearchfile)
-    shift
-    msg remote"remotesearchfile: This might take a long time, please be patient..."
-    msg "(xbps-query -v -R -o \"*/$1\"):"
-    sleep 1
-    xbps-query -v -R -o "*/$1"
-    ret=$?; msg "Execution finished (xbps-query -v -R -o \"*/$1\"), return code was: $ret"
-    exit $ret
-  ;;
-
 
   list)
     shift
