@@ -146,7 +146,7 @@ usage () {
   color $colorheader
   echo "USAGE: "
   color $colorgray
-  echo "vpm [OPTIONS] [SUBCOMMANDS] [<OPTIONS>] [<args>]"
+  echo "vpm [OPTIONS] [SUBCOMMANDS] [<ARGS>]"
   echo 
   color $colorheader
   echo "OPTIONS: "
@@ -167,8 +167,8 @@ usage () {
   echo "listrepos                    - List configured repositories"
   echo "repolist                     - Alias for listrepos"
   t "xbps-query -v -L"
-  echo "addrepo <args>               - Add an additional repository"
-  t "xbps-install <args>"
+  echo "addrepo <ARGS>               - Add an additional repository"
+  t "xbps-install <ARGS>"
   echo "info <package>               - Show information about <package>"
   t "xbps-query-v -R"
   echo "filelist <package>           - Show file-list of <package>"
