@@ -137,22 +137,19 @@ usage () {
   version
   echo
   color 66
-  echo
   echo "USAGE: "
   color 101
   echo "vpm [OPTIONS] [SUBCMD] [<OPTIONS>] [<args>]"
   echo 
   color 66
-  echo
   echo "OPTIONS: "
   color 101
-  echo "--color=<yes|no|auto>        - Enable/Disable colorized output (default: no)"
+  echo "--color=<yes|no|auto>        - Enable/Disable colorized output (default: auto)"
   echo "--help                       - (same as: help)"
   echo "--show-translations          - Show XBPS command translations for vpm sub-commands"
   echo "--verbose                    - Verbose mode (shows XBPS command translations during execution)"
   echo
   color 66
-  echo
   echo "SUBCOMMANDS: "
   color 109
   echo "sync                         - Synchronize remote repository data"
