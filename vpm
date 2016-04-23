@@ -35,29 +35,6 @@ autocolor () {
 # verbose mode
 verbose=false
 
-case "$1" in
-  --color=true|--color=yes|--color=on)
-	  color=true
-    shift
-  ;;
-  --color=auto)
-    autocolor
-    shift
-  ;;
-  --color=false|--color=off|--color=no)
-    color=false
-    shift
-  ;;
-  --verbose=true)
-    shift
-    verbose=true
-  ;;
-  --show-translations)
-    shift
-    show_translations=1
-  ;;
-esac
-
 color () {
 if [[ ! $color == "false" ]]; then
   case "$1" in
@@ -218,6 +195,42 @@ usage () {
   color reset
 }
 
+case "$1" in
+  --color=true|--color=yes|--color=on)
+	  color=true
+    shift
+  ;;
+  --color=auto)
+    autocolor
+    shift
+  ;;
+  --color=false|--color=off|--color=no)
+    color=false
+    shift
+  ;;
+  --verbose=true)
+    shift
+    verbose=true
+  ;;
+  --show-translations)
+    shift
+    show_translations=1
+  ;;
+  --help)
+    shift
+    usage
+    exit 255
+  ;;
+  --help-pager)
+    shift
+    $0 --color=off --help | less
+  ;;
+  --*)
+    msg "Unknown option: $1 (try: ${0##*/} --help)"
+    exit 1
+  ;;
+esac
+
 if [[ "$1" == "" ]]; then
   usage
   exit 0
@@ -345,8 +358,7 @@ case "$arg" in
   install)
   shift
   if [ "$#" -lt 1 ]; then
-    msg "ERROR: install: argument missing"
-    usage
+    msg "ERROR: install: argument missing, try --help."
     exit 1
   fi
   args=($@)
@@ -365,8 +377,7 @@ case "$arg" in
   devinstall)
   shift
   if [ "$#" -lt 1 ]; then
-    msg "ERROR: devinstall: argument missing"
-    usage
+    msg "ERROR: devinstall: argument missing, try --help."
     exit 1
   fi
   args=($@)
