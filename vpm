@@ -96,7 +96,7 @@ version () {
   banner
   color sgr0
   msg "vpm - Version: $version"
-  msg "Copyright (c) 2016 Armin Jenewein <a@m2m.pm>"
+  msg "Copyright (c) 2016 Armin Jenewein <a@m2m.pm> (GPLv3+)"
   msg "XBPS version: $(xbps-query -v --version)"
 }
 
