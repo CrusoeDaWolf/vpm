@@ -153,9 +153,9 @@ usage () {
   t "xbps-query-v -R"
   echo "filelist <package>           - Show file-list of <package>"
   t "xbps-query -v -R -f"
-  echo "deps <package>               - Show dependendies of <package>"
+  echo "deps <package>               - Show dependencies for <package>"
   t "xbps-query -v -R -x"
-  echo "reverse <package>            - Show reverse dependendies of <package>"
+  echo "reverse <package>            - Show reverse dependendies of <package> (see man xbps-query)"
   t "xbps-query -v -R -X"
   echo "search <name>                - Search for package by <name>"
   t "xbps-query -v -Rs"
@@ -285,7 +285,16 @@ case "$arg" in
     msg "searchfile (xbps-query -v -o \"*/$1\"):"
     sleep 1
     xbps-query -v -o "*/$1"
-    ret=$?; msg "Execution finished (xbps-query -v -R -o \"*/$1\"), return code was: $ret"
+    ret=$?; msg "Execution finished (xbps-query -v -o \"*/$1\"), return code was: $ret"
+    exit $ret
+  ;;
+
+  remotesearchfile)
+    shift
+    msg "remotesearchfile (xbps-query -R -v -o \"*/$1\"):"
+    sleep 1
+    xbps-query -R -v -o "*/$1"
+    ret=$?; msg "Execution finished (xbps-query -R -v -o \"*/$1\"), return code was: $ret"
     exit $ret
   ;;
 
