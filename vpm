@@ -2,9 +2,10 @@
 # vim: ft=config ts=2 sw=2 sts=2 et
 
 # vpm - void package management utility for
-
 # XBPS, the X Binary Package System
 # Copyright (c) 2016 Armin Jenewein <a@m2m.pm>
+# For more information about XBPS, see:
+# https://github.com/voidlinux/xbps
 
 # Released under the terms of the GNU general public license, version 3+
 # see LICENSE file for license information.
