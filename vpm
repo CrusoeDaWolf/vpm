@@ -374,17 +374,11 @@ case "$arg" in
     msg "ERROR: install: argument missing, try --help."
     exit 1
   fi
-  args=($@)
   count=0
-  msg "Packages will be installed one-by-one"
-  msg "Use \"forceinstall\" to override this if you know what you're doing."
-  for arg in "${args[@]}"; do
-  let count=count+1
-  msg "Installing packages: ($count/${#args[@]}): $arg (xbps-install -S $arg) ..."
-  xbps-install -S "$arg"
+  msg "Installing packages: $@ (xbps-install -S $@) ..."
+  xbps-install -S "$@"
   ret="$?"
-  msg "[xbps-install -S $arg] return code: $ret"
-  done
+  msg "[xbps-install -S $@] return code: $ret"
   ;;
 
   devinstall)
