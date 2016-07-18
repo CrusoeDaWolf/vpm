@@ -27,6 +27,11 @@ version="$(getversion)"
 # set to "true" to enable colorized output, or "auto" to use auto-detection via $TERM
 color=auto
 
+# disable colorization on TTYs
+if [[ "$TERM" == linux || "$TERM" == dumb ]]; then
+  export colors=false
+fi
+
 # enable auto colorization
 autocolor () {
   case "$TERM" in
