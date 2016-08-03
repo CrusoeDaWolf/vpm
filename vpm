@@ -18,7 +18,8 @@ colordarkgray=245
 colorbrackets=242
 
 getversion () {
-  cd "${0%/*}"
+  fp="$(readlink -f $0)"
+  cd "${fp%/*}"
   git describe --all --debug --long --tags 2>/dev/null || echo "UNKNOWN"
 }
 
@@ -103,7 +104,7 @@ version () {
   color sgr0
   msg "vpm - Version: $version"
   msg "Copyright (c) 2016 Armin Jenewein <a@m2m.pm> (GPLv3+)"
-  msg "XBPS version: $(xbps-query -v --version)"
+  msg "XBPS version: $(xbps-query -v --version | sed 's/GIT: UNSET//')"
 }
 
 # extract versionstring appendix from given package name
