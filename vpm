@@ -149,49 +149,49 @@ usage () {
   color $colorgray
   echo "sync                         - Synchronize remote repository data"
   t "xbps-install -S"
-  echo "update                       - Update the system"
+  echo "update (up)                  - Update the system"
   t "xbps-install -Sduv"
-  echo "listrepos                    - List configured repositories"
-  echo "repolist                     - Alias for listrepos"
+  echo "listrepos (lr)               - List configured repositories"
+  echo "repolist (rl)                - Alias for listrepos"
   t "xbps-query -v -L"
-  echo "addrepo <ARGS>               - Add an additional repository"
+  echo "addrepo (ar) <ARGS>          - Add an additional repository"
   t "xbps-install <ARGS>"
-  echo "info <package>               - Show information about <package>"
+  echo "info <pkg>                   - Show information about <package>"
   t "xbps-query-v -R"
-  echo "filelist <package>           - Show file-list of <package>"
+  echo "filelist (fl) <pkg>          - Show file-list of <package>"
   t "xbps-query -v -R -f"
-  echo "deps <package>               - Show dependencies for <package>"
+  echo "deps <pkg>                   - Show dependencies for <package>"
   t "xbps-query -v -R -x"
-  echo "reverse <package>            - Show reverse dependendies of <package> (see man xbps-query)"
+  echo "reverse (rv) <pkg>           - Show reverse dependendies of <package> (see man xbps-query)"
   t "xbps-query -v -R -X"
-  echo "search <name>                - Search for package by <name>"
+  echo "search (s) <name>            - Search for package by <name>"
   t "xbps-query -v -Rs"
-  echo "searchfile <file>            - Search for package containing <file> (local)"
+  echo "searchfile (sf) <file>       - Search for package containing <file> (local)"
   t "xbps-query -v -o \"*/$1\""
-  echo "list                         - List installed packages"
+  echo "list (ls)                    - List installed packages"
   t "xbps-query -v -l"
-  echo "install <package(s)>         - Install <package(s)>"
+  echo "install (i) <pkg(s)>         - Install <package(s)>"
   t "xbps-install -S"
-  echo "devinstall <package(s)>      - Install <package> (and corresponding <package>-devel package(s))"
+  echo "devinstall (di) <pkg(s)>     - Install <package> (and corresponding <package>-devel package(s))"
   t "xbps-install -S <package> <package>-devel"
-  echo "listalternatives             - List alternative candidates"
+  echo "listalternatives (la)        - List alternative candidates"
   t "xbps-alternatives -l"
-  echo "setalternative <package>     - Set alternative for <package>"
+  echo "setalternative (sa) <pkg(s)  - Set alternative for <package>"
   t "xbps-alternatives -s"
-  echo "reconfigure <package>        - Re-configure installed <package>"
+  echo "reconfigure (rc) <pkg>       - Re-configure installed <package>"
   t "xbps-reconfigure -v"
-  echo "forceinstall <package(s)>    - Force installation of <package(s)>"
+  echo "forceinstall (fi) <pkg(s)>   - Force installation of <package(s)>"
   t "xbps-install -f"
   echo "remove <package(s))          - Remove <package(s)> from the system"
   t "xbps-remove -v "
-  echo "removerecursive <package(s)> - Recursively remove package(s) (and its dependencies)"
+  echo "removerecursive <pkg(s)>     - Recursively remove package(s) (and its dependencies)"
   t "xbps-remove -v -R"
-  echo "cleanup                      - Clean up cache directory"
+  echo "cleanup (cl)                 - Clean up cache directory"
   t "xbps-remove -v -O"
-  echo "autoremove                   - Remove orphaned packages"
+  echo "autoremove (ar)              - Remove orphaned packages"
   t "xbps-remove -v -O"
   echo "help                         - Show usage information"
-  echo "helppager                    - Show usage information (will pipe output to less/more)"
+  echo "helppager (hp)               - Show usage information (will pipe output to less/more)"
   echo
   color $colorheader
   echo "XBPS COMPATIBILITY COOLNESS:"
@@ -254,7 +254,7 @@ arg="$b"
 fi
 
 case "$arg" in
-  info)
+  info|i)
     shift
     msg "(xbps-query -v -R $@):"
     xbps-query -v -R "$@"
@@ -262,7 +262,7 @@ case "$arg" in
     exit $ret
   ;;
 
-  filelist)
+  filelist|fl)
     shift
     xbps-query -v -R -f "$@"
     ret=$?; 
@@ -272,14 +272,14 @@ case "$arg" in
     exit $ret
   ;;
 
-  deps|dependencies)
+  deps|dependencies|dep)
     shift
     xbps-query -v -R -x "$@"
     ret=$?; msg "Execution finished (xbps-query -v -R -x \"*/$1\"), return code was: $ret"
     exit $ret
   ;;
 
-  reverse)
+  reverse|rv)
     shift
     msg "Reverse dependencies for $@ (xbps-query -v -R $@):"
     xbps-query -v -R -X "$@"
@@ -287,7 +287,7 @@ case "$arg" in
     exit $ret
   ;;
 
-  searchfile)
+  searchfile|sf)
     shift
     msg "searchfile (xbps-query -v -o \"*/$1\"):"
     sleep 1
@@ -296,7 +296,7 @@ case "$arg" in
     exit $ret
   ;;
 
-  remotesearchfile)
+  remotesearchfile|rsf)
     shift
     msg "remotesearchfile (xbps-query -R -v -o \"*/$1\"):"
     sleep 1
@@ -305,7 +305,7 @@ case "$arg" in
     exit $ret
   ;;
 
-  list)
+  list|ls)
     shift
     msg "Installed packages: "
     count=0
@@ -333,16 +333,16 @@ case "$arg" in
     done
   ;;
 
-  listalternative|listalternatives)
+  listalternative|listalternatives|la)
   xbps-alternatives -l "$@"
   ;;
 
-  setalternative|setalternatives)
+  setalternative|setalternatives|sa)
   shift
   xbps-alternatives -s "$@"
   ;;
 
-  repolist|listrepos)
+  repolist|listrepos|rl|lr)
     msg "Configured repositories (xbps-query -v -L): "
     xbps-query -v -L
     shift
@@ -410,63 +410,63 @@ case "$arg" in
   done
   ;;
 
-  forceinstall)
+  forceinstall|fi)
   shift
   msg "Force-Installing Package(s): $@ (xbps-install -Sf $@)"
   xbps-install -Sf "$@"
   ;;
 
-  remove)
+  remove|rm)
   shift
   msg "Removing package(s): $@ (xbps-remove -v $@)"
   xbps-remove -v "$@"
   ;;
 
-  removerecursive)
+  removerecursive|rr)
   shift
   msg "Removing package(s) recursively: $@ (xbps-remove -v -R $@)"
   xbps-remove -v -R "$@"
   ;;
 
-  reconfigure)
+  reconfigure|rc)
   shift
   msg "reconfigure: Re-configuring package(s) (xbps-reconfigure -v $@):"
   xbps-reconfigure -v "$@"
   ;; 
 
-  autoremove)
+  autoremove|ar)
   shift
   msg "autoremove: Removing orphaned packages (xbps-remove -v -Q)"
   xbps-remove -v -O
   msg "done."
   ;;
 
-  update)
+  update|upgrade|up)
   shift
   msg "Running system update (xbps-install -Suv)"
   xbps-install -Suv
   msg "[xbps-install -Suv] return code: $?"
   ;;
 
-  search)
+  search|s)
   shift
   msg "Searching for: $@ (xbps-query -v -Rs $@)"
   xbps-query -v -Rs "$@"
   msg "[xbps-query -v -Rs $@] return code: $?"
   ;;
 
-  cleanup)
+  cleanup|clean|cl)
   msg "Cleaning up packages (will remove orphaned packages) (xbps-remove -v -O $@)"
   shift
   xbps-remove -v -O "$@"
   msg "[xbps-remove -v --D $@] return code: $?"
   ;;
 
-  help|-h|--help)
+  h|help|-h|--help)
   usage
   ;;
 
-  helppager|help-pager)
+  helppager|help-pager|hp)
     if hash less >/dev/null 2>&1; then
       $0 --color=off help | less
     else
