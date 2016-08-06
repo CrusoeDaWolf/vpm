@@ -21,7 +21,7 @@ vpm is a simple to use, daily-driver enhancement to the awesome XBPS (X Binary P
 
 # Screenshots
 
-Screenshot of a recent vpm release:
+Screenshot of a (not so) recent (anymore) vpm release:
 
 ![alt tag](https://raw.githubusercontent.com/netzverweigerer/vpm/master/screenshots/vpm.png)
 
