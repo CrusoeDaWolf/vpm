@@ -36,7 +36,18 @@ I initially found XBPS to have a steep learning-curve, so I wanted to ease the l
 Rainbows and unicorns, indeed. If you like colorized output, please see the --color=true option, too! All vpm options try to have human readable and easy to remember syntax, no --long-option-with-multiple-complex-words, no need to even prefix arguments with --, vpm just tries to do its best it can to understand the user (there are some command-line-switches, though, see vpm help).
 
 # Dependencies
-vpm requires BASH, the Bourne Again SHell. Use xbps-install -S bash if you don't have it installed, yet.
+vpm requires BASH, the Bourne Again SHell, which should be installed by default on a new VoidLinux system. You also will need git to obtain a clone of the vpm GitHub repository (see "Installation" section, below).
+
+# Installation
+Installing vpm should be as easy as following the simple following steps:
+
+1. Install git via xbps-install
+	xbps-install -S git
+
+2. Clone vpm repository
+	git clone git@github.com:netzverweigerer/vpm.git
+
+I'm not covering how to put vpm into a place that is in your $PATH as I can't give general UNIX administration support in this README.
 
 # Author
 vpm was written by Armin Jenewein (GitHub: @netzverweigerer) <vpm@m2m.pm>
