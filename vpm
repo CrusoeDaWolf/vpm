@@ -10,7 +10,7 @@
 # Released under the terms of the GNU general public license, version 3+
 # see LICENSE file for license information.
 
-colorlogo=77
+colorlogo=197
 colorheader=111
 colortext=37
 colorgray=248
@@ -18,7 +18,8 @@ colordarkgray=245
 colorbrackets=242
 
 getversion () {
-  cd "${0%/*}"
+  fp="$(readlink -f $0)"
+  cd "${fp%/*}"
   git describe --all --debug --long --tags 2>/dev/null || echo "UNKNOWN"
 }
 
@@ -27,6 +28,11 @@ version="$(getversion)"
 # set to "true" to enable colorized output, or "auto" to use auto-detection via $TERM
 # it might be recommendable to set this to "false" on server systems
 color=auto
+
+# disable colorization on TTYs
+if [[ "$TERM" == linux || "$TERM" == dumb ]]; then
+  export colors=false
+fi
 
 # enable auto colorization
 autocolor () {
@@ -69,6 +75,23 @@ msg () {
   color sgr0
 }
 
+rmsg () {
+  color $colorbrackets
+  echo -n "["
+  color 77
+  echo -n "vpm"
+  color $colorbrackets
+  echo -n "] "
+  if [[ $1 -gt 0 ]]; then
+    color 5
+  else
+    color 2
+  fi
+  shift
+  echo "$@"
+  color sgr0
+}
+
 if [[ "$UID" -gt 0 ]]; then
   msg "ERROR: ${0##*/} needs super-user privileges. Exiting."
   exit 255
@@ -99,7 +122,7 @@ version () {
   color sgr0
   msg "vpm - Version: $version"
   msg "Copyright (c) 2016 Armin Jenewein <a@m2m.pm> (GPLv3+)"
-  msg "XBPS version: $(xbps-query -v --version)"
+  msg "XBPS version: $(xbps-query -v --version | sed 's/GIT: UNSET//')"
 }
 
 # extract versionstring appendix from given package name
@@ -144,49 +167,49 @@ usage () {
   color $colorgray
   echo "sync                         - Synchronize remote repository data"
   t "xbps-install -S"
-  echo "update                       - Update the system"
+  echo "update (up)                  - Update the system"
   t "xbps-install -Sduv"
-  echo "listrepos                    - List configured repositories"
-  echo "repolist                     - Alias for listrepos"
+  echo "listrepos (lr)               - List configured repositories"
+  echo "repolist (rl)                - Alias for listrepos"
   t "xbps-query -v -L"
-  echo "addrepo <ARGS>               - Add an additional repository"
+  echo "addrepo (ar) <ARGS>          - Add an additional repository"
   t "xbps-install <ARGS>"
-  echo "info <package>               - Show information about <package>"
+  echo "info <pkg>                   - Show information about <package>"
   t "xbps-query-v -R"
-  echo "filelist <package>           - Show file-list of <package>"
+  echo "filelist (fl) <pkg>          - Show file-list of <package>"
   t "xbps-query -v -R -f"
-  echo "deps <package>               - Show dependencies for <package>"
+  echo "deps <pkg>                   - Show dependencies for <package>"
   t "xbps-query -v -R -x"
-  echo "reverse <package>            - Show reverse dependendies of <package> (see man xbps-query)"
+  echo "reverse (rv) <pkg>           - Show reverse dependendies of <package> (see man xbps-query)"
   t "xbps-query -v -R -X"
-  echo "search <name>                - Search for package by <name>"
+  echo "search (s) <name>            - Search for package by <name>"
   t "xbps-query -v -Rs"
-  echo "searchfile <file>            - Search for package containing <file> (local)"
+  echo "searchfile (sf) <file>       - Search for package containing <file> (local)"
   t "xbps-query -v -o \"*/$1\""
-  echo "list                         - List installed packages"
+  echo "list (ls)                    - List installed packages"
   t "xbps-query -v -l"
-  echo "install <package(s)>         - Install <package(s)>"
+  echo "install (i) <pkg(s)>         - Install <package(s)>"
   t "xbps-install -S"
-  echo "devinstall <package(s)>      - Install <package> (and corresponding <package>-devel package(s))"
+  echo "devinstall (di) <pkg(s)>     - Install <package> (and corresponding <package>-devel package(s))"
   t "xbps-install -S <package> <package>-devel"
-  echo "listalternatives             - List alternative candidates"
+  echo "listalternatives (la)        - List alternative candidates"
   t "xbps-alternatives -l"
-  echo "setalternative <package>     - Set alternative for <package>"
+  echo "setalternative (sa) <pkg(s)  - Set alternative for <package>"
   t "xbps-alternatives -s"
-  echo "reconfigure <package>        - Re-configure installed <package>"
+  echo "reconfigure (rc) <pkg>       - Re-configure installed <package>"
   t "xbps-reconfigure -v"
-  echo "forceinstall <package(s)>    - Force installation of <package(s)>"
+  echo "forceinstall (fi) <pkg(s)>   - Force installation of <package(s)>"
   t "xbps-install -f"
   echo "remove <package(s))          - Remove <package(s)> from the system"
   t "xbps-remove -v "
-  echo "removerecursive <package(s)> - Recursively remove package(s) (and its dependencies)"
+  echo "removerecursive <pkg(s)>     - Recursively remove package(s) (and its dependencies)"
   t "xbps-remove -v -R"
-  echo "cleanup                      - Clean up cache directory"
+  echo "cleanup (cl)                 - Clean up cache directory"
   t "xbps-remove -v -O"
-  echo "autoremove                   - Remove orphaned packages"
+  echo "autoremove (ar)              - Remove orphaned packages"
   t "xbps-remove -v -O"
   echo "help                         - Show usage information"
-  echo "helppager                    - Show usage information (will pipe output to less/more)"
+  echo "helppager (hp)               - Show usage information (will pipe output to less/more)"
   echo
   color $colorheader
   echo "XBPS COMPATIBILITY COOLNESS:"
@@ -202,7 +225,7 @@ usage () {
 
 case "$1" in
   --color=true|--color=yes|--color=on)
-	  color=true
+    color=true
     shift
   ;;
   --color=auto)
@@ -249,20 +272,21 @@ arg="$b"
 fi
 
 case "$arg" in
-  info)
+  info|in)
     shift
     msg "(xbps-query -v -R $@):"
     xbps-query -v -R "$@"
-    ret=$?; msg "Execution finished (xbps-query -v -R $@), return code was: $ret"
+    ret=$?
+    rmsg $ret "Execution finished (xbps-query -v -R $@), return code was: $ret"
     exit $ret
   ;;
 
-  filelist|fl)
+  filelist|fl|listfiles)
     shift
     xbps-query -v -R -f "$@"
     ret=$?; 
     if [[ $verbose == "true" ]]; then
-      msg "Execution finished (xbps-query -v -R -f \"*/$1\"), return code was: $ret"
+      rmsg $ret "Execution finished (xbps-query -v -R -f \"*/$1\"), return code was: $ret"
     fi
     exit $ret
   ;;
@@ -270,7 +294,8 @@ case "$arg" in
   deps|dep|dependencies)
     shift
     xbps-query -v -R -x "$@"
-    ret=$?; msg "Execution finished (xbps-query -v -R -x \"*/$1\"), return code was: $ret"
+    ret=$?
+    rmsg $ret "Execution finished (xbps-query -v -R -x \"*/$1\"), return code was: $ret"
     exit $ret
   ;;
 
@@ -278,7 +303,8 @@ case "$arg" in
     shift
     msg "Reverse dependencies for $@ (xbps-query -v -R $@):"
     xbps-query -v -R -X "$@"
-    ret=$?; msg "Execution finished (xbps-query -v -R $@), return code was: $ret"
+    ret=$?
+    msg $ret "Execution finished (xbps-query -v -R $@), return code was: $ret"
     exit $ret
   ;;
 
@@ -287,7 +313,8 @@ case "$arg" in
     msg "searchfile (xbps-query -v -o \"*/$1\"):"
     sleep 1
     xbps-query -v -o "*/$1"
-    ret=$?; msg "Execution finished (xbps-query -v -o \"*/$1\"), return code was: $ret"
+    ret=$?
+    msg $ret "Execution finished (xbps-query -v -o \"*/$1\"), return code was: $ret"
     exit $ret
   ;;
 
@@ -296,11 +323,12 @@ case "$arg" in
     msg "remotesearchfile (xbps-query -R -v -o \"*/$1\"):"
     sleep 1
     xbps-query -R -v -o "*/$1"
-    ret=$?; msg "Execution finished (xbps-query -R -v -o \"*/$1\"), return code was: $ret"
+    ret=$?
+    msg $ret "Execution finished (xbps-query -R -v -o \"*/$1\"), return code was: $ret"
     exit $ret
   ;;
 
-  list|l)
+  list|ls)
     shift
     msg "Installed packages: "
     count=0
@@ -309,6 +337,8 @@ case "$arg" in
     pkg="$(printf ${line#* } | xargs)"
     pkgname="$(printf '%s\n' "${pkg%-*}")"
     version="$(printf '%s\n' "${pkg##*-}")"
+    color 8
+    echo -n "$count "
     color $colortext
     echo -n "$pkgname "
     color $colorbrackets
@@ -330,21 +360,28 @@ case "$arg" in
 
   listalternative|listalternatives|la)
   xbps-alternatives -l "$@"
+  ret=$?
+  rmsg $ret "xbps-alternatives return code: $ret (xbps-alternatives -l $@)"
   ;;
 
   setalternative|setalternatives|sa)
   shift
   xbps-alternatives -s "$@"
+  ret=$?
+  rmsg $ret "xbps-alternatives return code: $ret (xbps-alternatives -s $@)"
   ;;
 
   repolist|listrepos|rl|lr)
     msg "Configured repositories (xbps-query -v -L): "
     xbps-query -v -L
+    ret=$?
+    rmsg $ret "[xbps-query -v -L] return code: $?"
     shift
     echo
     msg "Available sub-repositories (xbps-query -v -Rs void-repo): "
     xbps-query -v -Rs void-repo
-    msg "[xbps-query -v -Rs void-repo] return code: $?"
+    ret=$?
+    rmsg $ret "[xbps-query -v -Rs void-repo] return code: $?"
     shift
     echo
     msg "Use \"${0##*/} addrepo <repository>\" to add a sub-repository."
@@ -356,17 +393,20 @@ case "$arg" in
     while [ "$#" -gt 0 ]; do
     msg "Adding repository: $1"
     xbps-install "$1"
-    msg "[xbps-install $arg] return code: $?"
+    ret=$?
+    rmsg $ret "[xbps-install $arg] return code: $?"
     msg "Synchronizing remote repository data (xbps-install -S): "
     xbps-install -S
-    msg "[xbps-install -S] return code: $?"
+    ret=$?
+    rmsg $ret"[xbps-install -S] return code: $?"
     shift
     done
     ;;
   sync|sy)
     msg "Synchronizing remote repository data: (xbps-install -S):"
     xbps-install -S
-    msg "[xbps-install -S] return code: $?"
+    ret=$?
+    rmsg $? "[xbps-install -S] return code: $?"
   ;;
 
   install|i)
@@ -375,11 +415,24 @@ case "$arg" in
     msg "ERROR: install: argument missing, try --help."
     exit 1
   fi
-  echo "Args: $@"
-  msg "Installing packages: $@ (xbps-install -S ${args[@]}) ..."
+  count=0
+  msg "Installing packages: $@ (xbps-install -S $@) ..."
   xbps-install -S "$@"
   ret="$?"
-  msg "[xbps-install -S $@] return code: $ret"
+  rmsg $ret "[xbps-install -S $@] return code: $ret"
+  ;;
+
+  yesinstall)
+  shift
+  if [ "$#" -lt 1 ]; then
+    msg "ERROR: install: argument missing, try --help."
+    exit 1
+  fi
+  count=0
+  msg "Installing packages: $@ (xbps-install -S $@) ..."
+  xbps-install -y -S "$@"
+  ret="$?"
+  rmsg $ret "[xbps-install -S $@] return code: $ret"
   ;;
 
   devinstall)
@@ -397,11 +450,11 @@ case "$arg" in
   msg "Installing package: $arg (xbps-install -S $arg) ..."
   xbps-install -S "$arg"
   ret="$?"
-  msg "[xbps-install -S $arg] return code: $ret"
+  rmsg $ret "[xbps-install -S $arg] return code: $ret"
   msg "installing devel package (${arg}-devel):"
   xbps-install -S "${arg}-devel"
   ret="$?"
-  msg "[xbps-install -S ${arg}-devel] return code: $ret"
+  rmsg $ret "[xbps-install -S ${arg}-devel] return code: $ret"
   done
   ;;
 
@@ -409,55 +462,67 @@ case "$arg" in
   shift
   msg "Force-Installing Package(s): $@ (xbps-install -Sf $@)"
   xbps-install -Sf "$@"
+  ret="$?"
+  rmsg $ret "[xbps-install -Sf ${@}] return code: $ret"
   ;;
 
   remove|rm)
   shift
   msg "Removing package(s): $@ (xbps-remove -v $@)"
   xbps-remove -v "$@"
+  ret="$?"
+  rmsg $ret "[xbps-remove -v ${@}] return code: $ret"
   ;;
 
   removerecursive|rr)
   shift
   msg "Removing package(s) recursively: $@ (xbps-remove -v -R $@)"
   xbps-remove -v -R "$@"
+  ret="$?"
+  rmsg $ret "[xbps-remove -v -R ${@}] return code: $ret"
   ;;
 
   reconfigure|rc)
   shift
   msg "reconfigure: Re-configuring package(s) (xbps-reconfigure -v $@):"
   xbps-reconfigure -v "$@"
+  ret="$?"
+  rmsg $ret "[xbps-reconfigure -v ${@}] return code: $ret"
   ;; 
 
   autoremove|ar)
   shift
   msg "autoremove: Removing orphaned packages (xbps-remove -v -Q)"
   xbps-remove -v -O
-  msg "done."
+  ret="$?"
+  rmsg $ret "[xbps-remove -v -O] return code: $ret"
   ;;
 
-  update|up)
+  update|upgrade|up)
   shift
   msg "Running system update (xbps-install -Suv)"
   xbps-install -Suv
-  msg "[xbps-install -Suv] return code: $?"
+  ret=$?
+  rmsg $ret "[xbps-install -Suv] return code: $ret"
   ;;
 
   search|s)
   shift
   msg "Searching for: $@ (xbps-query -v -Rs $@)"
   xbps-query -v -Rs "$@"
-  msg "[xbps-query -v -Rs $@] return code: $?"
+  ret=$?
+  rmsg $ret "[xbps-query -v -Rs $@] return code: $?"
   ;;
 
-  cleanup|cl|clean)
+  cleanup|clean|cl)
   msg "Cleaning up packages (will remove orphaned packages) (xbps-remove -v -O $@)"
   shift
   xbps-remove -v -O "$@"
-  msg "[xbps-remove -v --D $@] return code: $?"
+  ret=$?
+  rmsg $ret "[xbps-remove -v --D $@] return code: $?"
   ;;
 
-  help|-h|--help|h)
+  h|help|-h|--help)
   usage
   ;;
 
@@ -476,6 +541,8 @@ case "$arg" in
     # xbps-<subcommand> found
     msg "relaying to XBPS: xbps-${a} $@"
     xbps-${a} $@
+    ret=$?
+    rmsg "xbps-${a} $@ return code: $ret"
   else
     msg "Unrecognized vpm subcommand: $1 (and xbps-$1 does not exist) - Try: ${0##*/} help"
     echo
