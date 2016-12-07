@@ -31,7 +31,7 @@ color=auto
 
 # disable colorization on TTYs
 if [[ "$TERM" == linux || "$TERM" == dumb ]]; then
-  export colors=false
+  export color=false
 fi
 
 # enable auto colorization
@@ -63,6 +63,7 @@ fi
 
 }
 
+# prints a message (with vpm-prefix)
 msg () {
   color $colorbrackets
   echo -n "["
@@ -75,6 +76,7 @@ msg () {
   color sgr0
 }
 
+# rmsg - same (but colorized based on return status passed via $1)
 rmsg () {
   color $colorbrackets
   echo -n "["
@@ -136,12 +138,12 @@ extract_packagename () {
 }
 
 t () {
-if [[ "$show_translations" != "" ]]; then
-tput setaf 242
-echo "                             $@"
-echo
-tput setaf 109
-fi
+  if [[ "$show_translations" != "" ]]; then
+    tput setaf 242
+    echo "                             $@"
+    echo
+    tput setaf 109
+  fi
 }
 
 usage () {
@@ -267,8 +269,8 @@ fi
 arg="$1"
 
 if [[ "$arg" =~ --.* ]]; then
-b="${arg:2}"
-arg="$b"
+  b="${arg:2}"
+  arg="$b"
 fi
 
 case "$arg" in
@@ -359,16 +361,16 @@ case "$arg" in
   ;;
 
   listalternative|listalternatives|la)
-  xbps-alternatives -l "$@"
-  ret=$?
-  rmsg $ret "xbps-alternatives return code: $ret (xbps-alternatives -l $@)"
+    xbps-alternatives -l "$@"
+    ret=$?
+    rmsg $ret "xbps-alternatives return code: $ret (xbps-alternatives -l $@)"
   ;;
 
   setalternative|setalternatives|sa)
-  shift
-  xbps-alternatives -s "$@"
-  ret=$?
-  rmsg $ret "xbps-alternatives return code: $ret (xbps-alternatives -s $@)"
+    shift
+    xbps-alternatives -s "$@"
+    ret=$?
+    rmsg $ret "xbps-alternatives return code: $ret (xbps-alternatives -s $@)"
   ;;
 
   repolist|listrepos|rl|lr)
@@ -423,16 +425,16 @@ case "$arg" in
   ;;
 
   yesinstall)
-  shift
-  if [ "$#" -lt 1 ]; then
-    msg "ERROR: install: argument missing, try --help."
-    exit 1
-  fi
-  count=0
-  msg "Installing packages: $@ (xbps-install -S $@) ..."
-  xbps-install -y -S "$@"
-  ret="$?"
-  rmsg $ret "[xbps-install -S $@] return code: $ret"
+    shift
+    if [ "$#" -lt 1 ]; then
+      msg "ERROR: install: argument missing, try --help."
+      exit 1
+    fi
+    count=0
+    msg "Installing packages: $@ (xbps-install -S $@) ..."
+    xbps-install -y -S "$@"
+    ret="$?"
+    rmsg $ret "[xbps-install -S $@] return code: $ret"
   ;;
 
   devinstall)
@@ -446,84 +448,84 @@ case "$arg" in
   msg "Use \"forceinstall\" to override this if you know what you're doing."
   msg "(Note: forceinstall won't install -devel packages)"
   for arg in "${args[@]}"; do
-  let count=count+1
-  msg "Installing package: $arg (xbps-install -S $arg) ..."
-  xbps-install -S "$arg"
-  ret="$?"
-  rmsg $ret "[xbps-install -S $arg] return code: $ret"
-  msg "installing devel package (${arg}-devel):"
-  xbps-install -S "${arg}-devel"
-  ret="$?"
-  rmsg $ret "[xbps-install -S ${arg}-devel] return code: $ret"
+    let count=count+1
+    msg "Installing package: $arg (xbps-install -S $arg) ..."
+    xbps-install -S "$arg"
+    ret="$?"
+    rmsg $ret "[xbps-install -S $arg] return code: $ret"
+    msg "installing devel package (${arg}-devel):"
+    xbps-install -S "${arg}-devel"
+    ret="$?"
+    rmsg $ret "[xbps-install -S ${arg}-devel] return code: $ret"
   done
   ;;
 
   forceinstall|fi)
-  shift
-  msg "Force-Installing Package(s): $@ (xbps-install -Sf $@)"
-  xbps-install -Sf "$@"
-  ret="$?"
-  rmsg $ret "[xbps-install -Sf ${@}] return code: $ret"
+    shift
+    msg "Force-Installing Package(s): $@ (xbps-install -Sf $@)"
+    xbps-install -Sf "$@"
+    ret="$?"
+    rmsg $ret "[xbps-install -Sf ${@}] return code: $ret"
   ;;
 
   remove|rm)
-  shift
-  msg "Removing package(s): $@ (xbps-remove -v $@)"
-  xbps-remove -v "$@"
-  ret="$?"
-  rmsg $ret "[xbps-remove -v ${@}] return code: $ret"
+    shift
+    msg "Removing package(s): $@ (xbps-remove -v $@)"
+    xbps-remove -v "$@"
+    ret="$?"
+    rmsg $ret "[xbps-remove -v ${@}] return code: $ret"
   ;;
 
   removerecursive|rr)
-  shift
-  msg "Removing package(s) recursively: $@ (xbps-remove -v -R $@)"
-  xbps-remove -v -R "$@"
-  ret="$?"
-  rmsg $ret "[xbps-remove -v -R ${@}] return code: $ret"
+    shift
+    msg "Removing package(s) recursively: $@ (xbps-remove -v -R $@)"
+    xbps-remove -v -R "$@"
+    ret="$?"
+    rmsg $ret "[xbps-remove -v -R ${@}] return code: $ret"
   ;;
 
   reconfigure|rc)
-  shift
-  msg "reconfigure: Re-configuring package(s) (xbps-reconfigure -v $@):"
-  xbps-reconfigure -v "$@"
-  ret="$?"
-  rmsg $ret "[xbps-reconfigure -v ${@}] return code: $ret"
+    shift
+    msg "reconfigure: Re-configuring package(s) (xbps-reconfigure -v $@):"
+    xbps-reconfigure -v "$@"
+    ret="$?"
+    rmsg $ret "[xbps-reconfigure -v ${@}] return code: $ret"
   ;; 
 
   autoremove|ar)
-  shift
-  msg "autoremove: Removing orphaned packages (xbps-remove -v -Q)"
-  xbps-remove -v -O
-  ret="$?"
-  rmsg $ret "[xbps-remove -v -O] return code: $ret"
+    shift
+    msg "autoremove: Removing orphaned packages (xbps-remove -v -Q)"
+    xbps-remove -v -O
+    ret="$?"
+    rmsg $ret "[xbps-remove -v -O] return code: $ret"
   ;;
 
   update|upgrade|up)
-  shift
-  msg "Running system update (xbps-install -Suv)"
-  xbps-install -Suv
-  ret=$?
-  rmsg $ret "[xbps-install -Suv] return code: $ret"
+    shift
+    msg "Running system update (xbps-install -Suv)"
+    xbps-install -Suv
+    ret=$?
+    rmsg $ret "[xbps-install -Suv] return code: $ret"
   ;;
 
   search|s)
-  shift
-  msg "Searching for: $@ (xbps-query -v -Rs $@)"
-  xbps-query -v -Rs "$@"
-  ret=$?
-  rmsg $ret "[xbps-query -v -Rs $@] return code: $?"
+    shift
+    msg "Searching for: $@ (xbps-query -v -Rs $@)"
+    xbps-query -v -Rs "$@"
+    ret=$?
+    rmsg $ret "[xbps-query -v -Rs $@] return code: $?"
   ;;
 
   cleanup|clean|cl)
-  msg "Cleaning up packages (will remove orphaned packages) (xbps-remove -v -O $@)"
-  shift
-  xbps-remove -v -O "$@"
-  ret=$?
-  rmsg $ret "[xbps-remove -v --D $@] return code: $?"
+    msg "Cleaning up packages (will remove orphaned packages) (xbps-remove -v -O $@)"
+    shift
+    xbps-remove -v -O "$@"
+    ret=$?
+    rmsg $ret "[xbps-remove -v --D $@] return code: $?"
   ;;
 
   h|help|-h|--help)
-  usage
+    usage
   ;;
 
   helppager|help-pager|hp)
@@ -535,19 +537,19 @@ case "$arg" in
   ;;
 
   ''|*)
-  a="$1"
-  if hash "xbps-${a}" >/dev/null 2>&1; then
-    shift
-    # xbps-<subcommand> found
-    msg "relaying to XBPS: xbps-${a} $@"
-    xbps-${a} $@
-    ret=$?
-    rmsg "xbps-${a} $@ return code: $ret"
-  else
-    msg "Unrecognized vpm subcommand: $1 (and xbps-$1 does not exist) - Try: ${0##*/} help"
-    echo
-    exit 1
-  fi
+    a="$1"
+    if hash "xbps-${a}" >/dev/null 2>&1; then
+      shift
+      # xbps-<subcommand> found
+      msg "relaying to XBPS: xbps-${a} $@"
+      xbps-${a} $@
+      ret=$?
+      rmsg "xbps-${a} $@ return code: $ret"
+    else
+      rmsg 255 "Unrecognized vpm subcommand: $1 (and xbps-$1 does not exist) - Try: ${0##*/} help"
+      echo
+      exit 1
+    fi
   ;;
 
 esac
