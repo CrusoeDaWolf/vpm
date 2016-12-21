@@ -10,12 +10,12 @@
 # Released under the terms of the GNU general public license, version 3+
 # see LICENSE file for license information.
 
-colorlogo=197
-colorheader=111
-colortext=37
-colorgray=248
-colordarkgray=245
-colorbrackets=242
+colorlogo=5
+colorheader=3
+colortext=4
+colorgray=2
+colordarkgray=11
+colorbrackets=6
 
 getversion () {
   fp="$(readlink -f $0)"
@@ -67,7 +67,7 @@ fi
 msg () {
   color $colorbrackets
   echo -n "["
-  color 77
+  color $colorlogo
   echo -n "vpm"
   color $colorbrackets
   echo -n "] "
@@ -80,12 +80,12 @@ msg () {
 rmsg () {
   color $colorbrackets
   echo -n "["
-  color 77
+  color $colorlogo
   echo -n "vpm"
   color $colorbrackets
   echo -n "] "
   if [[ $1 -gt 0 ]]; then
-    color 5
+    color 1
   else
     color 2
   fi
@@ -119,7 +119,7 @@ banner () {
 }
 
 version () {
-  color 107
+  color $colorlogo
   banner
   color sgr0
   msg "vpm - Version: $version"
