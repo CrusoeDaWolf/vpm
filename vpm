@@ -210,6 +210,8 @@ usage () {
   t "xbps-remove -v -O"
   echo "autoremove (ar)              - Remove orphaned packages"
   t "xbps-remove -v -O"
+  echo "whatprovides (wp) <file>     - Search for package containing <file>"
+  t "xlocate <pkg>"
   echo "help                         - Show usage information"
   echo "helppager (hp)               - Show usage information (will pipe output to less/more)"
   echo
@@ -533,6 +535,16 @@ case "$arg" in
       $0 --color=off help | less
     else
       $0 --color=off help | more
+    fi
+  ;;
+
+  whatprovides|wp)
+    if hash xlocate >/dev/null 2>&1; then
+      shift
+      # set -x
+      # xlocate -S "$@"
+      msg "relaying to: \"xlocate $@\" - use xlocate -S to (re-)build cached DB."
+      xlocate "$@"
     fi
   ;;
 
