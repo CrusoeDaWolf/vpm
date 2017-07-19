@@ -132,6 +132,14 @@ extract_packagename () {
   echo "$1" | rev | cut -d"-" -f 2- | rev
 }
 
+# check if we have UID 0, exit otherwise
+rootcheck () {
+if [[ "$EUID" -gt 0 ]]; then
+  msg "ERROR: ${0##*/}: This operation needs super-user privileges. Exiting."
+  exit 255
+fi
+}
+
 t () {
   if [[ "$show_translations" != "" ]]; then
     tput setaf 242
@@ -270,11 +278,6 @@ if [[ "$arg" =~ --.* ]]; then
   arg="$b"
 fi
 
-if [[ "$UID" -gt 0 ]]; then
-  msg "ERROR: ${0##*/} needs super-user privileges. Exiting."
-  exit 255
-fi
-
 case "$arg" in
   info|in)
     shift
@@ -370,6 +373,7 @@ case "$arg" in
 
   setalternative|setalternatives|sa)
     shift
+    rootcheck
     xbps-alternatives -s "$@"
     ret=$?
     rmsg $ret "xbps-alternatives return code: $ret (xbps-alternatives -s $@)"
@@ -394,6 +398,7 @@ case "$arg" in
 
   addrepo|ar)
     shift
+    rootcheck
     while [ "$#" -gt 0 ]; do
     msg "Adding repository: $1"
     xbps-install "$1"
@@ -407,14 +412,16 @@ case "$arg" in
     done
     ;;
   sync|sy)
+    shift
+    rootcheck
     msg "Synchronizing remote repository data: (xbps-install -S):"
     xbps-install -S
     ret=$?
     rmsg $? "[xbps-install -S] return code: $?"
   ;;
-
   install|i)
   shift
+  rootcheck
   if [ "$#" -lt 1 ]; then
     msg "ERROR: install: argument missing, try --help."
     exit 1
@@ -425,9 +432,9 @@ case "$arg" in
   ret="$?"
   rmsg $ret "[xbps-install -S $@] return code: $ret"
   ;;
-
   yesinstall)
     shift
+    rootcheck
     if [ "$#" -lt 1 ]; then
       msg "ERROR: install: argument missing, try --help."
       exit 1
@@ -440,30 +447,32 @@ case "$arg" in
   ;;
 
   devinstall)
-  shift
-  if [ "$#" -lt 1 ]; then
-    msg "ERROR: devinstall: argument missing, try --help."
-    exit 1
-  fi
-  args=($@)
-  msg "devinstall: Packages will be installed one-by-one"
-  msg "Use \"forceinstall\" to override this if you know what you're doing."
-  msg "(Note: forceinstall won't install -devel packages)"
-  for arg in "${args[@]}"; do
-    let count=count+1
-    msg "Installing package: $arg (xbps-install -S $arg) ..."
-    xbps-install -S "$arg"
-    ret="$?"
-    rmsg $ret "[xbps-install -S $arg] return code: $ret"
-    msg "installing devel package (${arg}-devel):"
-    xbps-install -S "${arg}-devel"
-    ret="$?"
-    rmsg $ret "[xbps-install -S ${arg}-devel] return code: $ret"
-  done
+    shift
+    rootcheck
+    if [ "$#" -lt 1 ]; then
+      msg "ERROR: devinstall: argument missing, try --help."
+      exit 1
+    fi
+    args=($@)
+    msg "devinstall: Packages will be installed one-by-one"
+    msg "Use \"forceinstall\" to override this if you know what you're doing."
+    msg "(Note: forceinstall won't install -devel packages)"
+    for arg in "${args[@]}"; do
+      let count=count+1
+      msg "Installing package: $arg (xbps-install -S $arg) ..."
+      xbps-install -S "$arg"
+      ret="$?"
+      rmsg $ret "[xbps-install -S $arg] return code: $ret"
+      msg "installing devel package (${arg}-devel):"
+      xbps-install -S "${arg}-devel"
+      ret="$?"
+      rmsg $ret "[xbps-install -S ${arg}-devel] return code: $ret"
+    done
   ;;
 
   forceinstall|fi)
     shift
+    rootcheck
     msg "Force-Installing Package(s): $@ (xbps-install -Sf $@)"
     xbps-install -Sf "$@"
     ret="$?"
@@ -472,6 +481,7 @@ case "$arg" in
 
   remove|rm)
     shift
+    rootcheck
     msg "Removing package(s): $@ (xbps-remove -v $@)"
     xbps-remove -v "$@"
     ret="$?"
@@ -480,6 +490,7 @@ case "$arg" in
 
   removerecursive|rr)
     shift
+    rootcheck
     msg "Removing package(s) recursively: $@ (xbps-remove -v -R $@)"
     xbps-remove -v -R "$@"
     ret="$?"
@@ -488,6 +499,7 @@ case "$arg" in
 
   reconfigure|rc)
     shift
+    rootcheck
     msg "reconfigure: Re-configuring package(s) (xbps-reconfigure -v $@):"
     xbps-reconfigure -v "$@"
     ret="$?"
@@ -496,6 +508,7 @@ case "$arg" in
 
   autoremove|ar)
     shift
+    rootcheck
     msg "autoremove: Removing orphaned packages (xbps-remove -v -Q)"
     xbps-remove -v -O
     ret="$?"
@@ -504,6 +517,7 @@ case "$arg" in
 
   update|upgrade|up)
     shift
+    rootcheck
     msg "Running system update (xbps-install -Suv)"
     xbps-install -Suv
     ret=$?
@@ -521,6 +535,7 @@ case "$arg" in
   cleanup|clean|cl)
     msg "Cleaning up packages (will remove orphaned packages) (xbps-remove -v -O $@)"
     shift
+    rootcheck
     xbps-remove -v -O "$@"
     ret=$?
     rmsg $ret "[xbps-remove -v --D $@] return code: $?"
@@ -539,8 +554,8 @@ case "$arg" in
   ;;
 
   whatprovides|wp)
+    shift
     if hash xlocate >/dev/null 2>&1; then
-      shift
       # set -x
       # xlocate -S "$@"
       msg "relaying to: \"xlocate $@\" - use xlocate -S to (re-)build cached DB."
