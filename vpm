@@ -94,11 +94,6 @@ rmsg () {
   color sgr0
 }
 
-if [[ "$UID" -gt 0 ]]; then
-  msg "ERROR: ${0##*/} needs super-user privileges. Exiting."
-  exit 255
-fi
-
 
 banner () {
   banner_fg=77
@@ -273,6 +268,11 @@ arg="$1"
 if [[ "$arg" =~ --.* ]]; then
   b="${arg:2}"
   arg="$b"
+fi
+
+if [[ "$UID" -gt 0 ]]; then
+  msg "ERROR: ${0##*/} needs super-user privileges. Exiting."
+  exit 255
 fi
 
 case "$arg" in
