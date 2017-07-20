@@ -3,13 +3,14 @@
 
 # vpm - void package management utility for
 # XBPS, the X Binary Package System
-# Copyright (c) 2016 Armin Jenewein <a@m2m.pm>
+# Copyright (c) 2016 Armin Jenewein <a@m2m.pm>, GitHub: @netzverweigerer
 # For more information about XBPS, see:
 # https://github.com/voidlinux/xbps
 
 # Released under the terms of the GNU general public license, version 3+
 # see LICENSE file for license information.
 
+# VPM color definitions
 colorlogo=5
 colorheader=3
 colortext=4
@@ -22,7 +23,6 @@ getversion () {
   cd "${fp%/*}"
   git describe --all --debug --long --tags 2>/dev/null || echo "UNKNOWN"
 }
-
 version="$(getversion)"
 
 # set to "true" to enable colorized output, or "auto" to use auto-detection via $TERM
@@ -60,7 +60,6 @@ if [[ ! $color == "false" ]]; then
     ;;
   esac
 fi
-
 }
 
 # prints a message (with vpm-prefix)
@@ -93,7 +92,6 @@ rmsg () {
   echo "$@"
   color sgr0
 }
-
 
 banner () {
   banner_fg=77
@@ -411,6 +409,7 @@ case "$arg" in
     shift
     done
     ;;
+
   sync|sy)
     shift
     rootcheck
@@ -419,6 +418,7 @@ case "$arg" in
     ret=$?
     rmsg $? "[xbps-install -S] return code: $?"
   ;;
+
   install|i)
   shift
   rootcheck
@@ -432,6 +432,7 @@ case "$arg" in
   ret="$?"
   rmsg $ret "[xbps-install -S $@] return code: $ret"
   ;;
+
   yesinstall)
     shift
     rootcheck
@@ -560,6 +561,8 @@ case "$arg" in
       # xlocate -S "$@"
       msg "relaying to: \"xlocate $@\" - use xlocate -S to (re-)build cached DB."
       xlocate "$@"
+    else
+      rmsg 255 "xlocate not found. Try installing the xtools package."
     fi
   ;;
 
